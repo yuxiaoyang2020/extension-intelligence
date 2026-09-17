@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="stylesheet" href="./_ds/modernist-63385c6f-eca4-4e0a-a8dd-bfeb311fa7a8/styles.css">
+<style>
+  :root {
+    --color-bg: #f6f7fb;
+    --color-surface: #eef1f7;
+    --color-card: #ffffff;
+    --color-text: #1a1f36;
+    --color-divider: color-mix(in srgb, #1a1f36 10%, transparent);
+    --color-accent: oklch(58% 0.19 264);
+    --color-accent-100: oklch(96% 0.02 264);
+    --color-accent-200: oklch(92% 0.045 264);
+    --color-accent-300: oklch(86% 0.07 264);
+    --color-accent-400: oklch(76% 0.12 264);
+    --color-accent-500: oklch(65% 0.17 264);
+    --color-accent-600: oklch(50% 0.19 264);
+    --color-accent-700: oklch(42% 0.17 264);
+    --color-accent-800: oklch(34% 0.14 264);
+    --color-accent-900: oklch(24% 0.09 264);
+    --color-accent-2-100: oklch(96% 0.02 264);
+    --color-accent-2-200: oklch(92% 0.045 264);
+    --color-accent-2-300: oklch(86% 0.07 264);
+    --color-accent-2-400: oklch(76% 0.12 264);
+    --color-accent-2-500: oklch(65% 0.17 264);
+    --color-accent-2-600: oklch(50% 0.19 264);
+    --color-accent-2-700: oklch(42% 0.17 264);
+    --color-accent-2-800: oklch(34% 0.14 264);
+    --color-accent-2-900: oklch(24% 0.09 264);
+    --color-danger: oklch(55% 0.19 25);
+    --color-danger-700: oklch(42% 0.17 25);
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+  }
+  .ei-link { color: var(--color-text); text-decoration: none; }
+  .ei-link:hover { color: var(--color-accent); }
+  .ei-num { font-variant-numeric: tabular-nums; text-align: right; }
+  .ei-row { cursor: pointer; }
+  .ei-th { cursor: pointer; user-select: none; }
+</style>
+</helmet>
+
+<div style="background:var(--color-bg);min-height:100vh;">
+
+<nav class="nav" style="position:sticky;top:0;background:var(--color-bg);z-index:30;padding-left:32px;padding-right:32px;">
+  <div style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-right:auto;" onClick="{{ goHome }}">
+    <span style="width:28px;height:28px;background:var(--color-text);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:14px;flex:none;border-radius:var(--radius-sm);">E</span>
+    <span class="nav-brand" style="margin-right:0;">Extension Intelligence</span>
+  </div>
+  <a href="#" class="ei-link" aria-current="{{ homeCurrentAttr }}" onClick="{{ goHome }}" style="text-decoration:none;">发现</a>
+  <a href="#" class="ei-link" aria-current="{{ schemaCurrentAttr }}" onClick="{{ goSchema }}" style="text-decoration:none;">数据集</a>
+  <a href="#" class="ei-link" aria-current="{{ rankingsCurrentAttr }}" onClick="{{ goRankingsNav }}" style="text-decoration:none;">排行榜</a>
+  <a href="#" class="ei-link" aria-current="{{ explorerCurrentAttr }}" onClick="{{ goExplorer }}" style="text-decoration:none;">市场探索</a>
+  <div style="display:flex;align-items:center;gap:20px;">
+    <a href="#" class="ei-link" aria-current="{{ pricingCurrentAttr }}" onClick="{{ goPricing }}" style="text-decoration:none;font-size:14px;">定价</a>
+    <a href="#" class="ei-link" aria-current="{{ accountCurrentAttr }}" onClick="{{ goAccount }}" style="text-decoration:none;font-size:14px;">账户</a>
+    <a href="#" style="text-decoration:none;color:inherit;font-size:14px;">登录</a>
+    <button class="btn btn-primary">注册</button>
+  </div>
+</nav>
+
+<!-- ============================= HOME ============================= -->
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<main style="max-width:1320px;margin:0 auto;padding:0 32px 80px;" data-screen-label="首页">
+
+  <section style="padding-top:56px;padding-bottom:40px;max-width:680px;">
+    <div class="card-kicker" style="margin-bottom:10px;">市场情报平台</div>
+    <h1 style="margin-bottom:14px;">Chrome Extension 市场情报平台</h1>
+    <p style="font-size:16px;opacity:0.75;margin-bottom:28px;">发现正在增长的插件，分析历史趋势，获取持续扩展的 Chrome Web Store 数据。</p>
+    <div style="position:relative;">
+      <input class="input" style="height:52px;font-size:16px;padding-left:16px;" placeholder="搜索插件名称或 Extension ID" value="{{ searchQuery }}" onChange="{{ onSearchChange }}">
+      <sc-if value="{{ hasSuggestions }}">
+        <div style="position:absolute;left:0;right:0;top:56px;background:var(--color-card);border:1px solid var(--color-divider);box-shadow:var(--shadow-md);z-index:10;border-radius:var(--radius-md);overflow:hidden;">
+          <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="3">
+            <div class="ei-row" style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--color-divider);" onClick="{{ s.onClick }}">
+              <span style="width:24px;height:24px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:12px;">{{ s.letter }}</span>
+              <span style="flex:1;font-size:14px;">{{ s.name }}</span>
+              <span style="font-size:12px;opacity:0.6;" class="ei-num">{{ s.users }} 用户</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding-bottom:8px;">
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">200K+</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">收录插件</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">自 2023 年</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">每日历史快照</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">50+</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">数据字段</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">每日</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">数据更新</div>
+    </div>
+  </section>
+
+  <section style="padding-top:8px;padding-bottom:8px;">
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);background:var(--color-card);padding:28px;">
+      <div class="card-kicker" style="margin-bottom:6px;">Chrome Extension Dataset</div>
+      <h2 style="font-size:24px;margin-bottom:6px;">支撑整个平台的历史数据资产</h2>
+      <p style="font-size:14px;opacity:0.7;margin-bottom:20px;max-width:640px;">一个独立的商业数据产品，覆盖 200K+ 插件、自 2023 年起的每日历史快照与每插件 50+ 字段，支持 CSV 导出，提供示例数据集。</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;background:var(--color-surface);">200K+ 插件</div>
+        <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;background:var(--color-surface);">自 2023 年每日快照</div>
+        <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;background:var(--color-surface);">50+ 字段 / 插件</div>
+        <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;background:var(--color-surface);">CSV 导出 · 示例数据集</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="#" class="btn btn-primary" onClick="{{ goSchema }}">浏览数据集 →</a>
+        <button class="btn btn-secondary" onClick="{{ onDownloadSchemaSampleHome }}">下载示例 CSV</button>
+      </div>
+    </div>
+  </section>
+  <p style="font-size:12px;opacity:0.55;margin:-6px 0 8px;">每日更新，持续扩展的历史数据库 —— 不是一次性的静态数据集。</p>
+
+  <hr class="hr">
+
+  <section style="padding-top:32px;">
+    <div class="card-kicker" style="margin-bottom:6px;">实时排行 · 预览</div>
+    <h2 style="font-size:26px;">7 日增长排行预览</h2>
+    <p style="font-size:14px;opacity:0.7;margin-bottom:20px;">哪些插件在过去 7 天增长最快？完整榜单支持更多周期与机会信号筛选。</p>
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);background:var(--color-card);overflow:hidden;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:36px;">#</th>
+            <th>插件</th>
+            <th class="ei-num">当前用户数</th>
+            <th class="ei-num">7日增长</th>
+            <th class="ei-num">7日增长率</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{ homePreviewRows }}" as="row" hint-placeholder-count="8">
+            <tr class="ei-row" onClick="{{ row.onClick }}">
+              <td style="opacity:0.6;">{{ row.rank }}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="width:26px;height:26px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:12px;">{{ row.letter }}</span>
+                  <span style="font-weight:600;">{{ row.name }}</span>
+                </div>
+              </td>
+              <td class="ei-num">{{ row.users }}</td>
+              <td class="ei-num" style="{{ row.growthStyle }}">{{ row.growth }}</td>
+              <td class="ei-num" style="{{ row.growthStyle }}">{{ row.ratePct }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:right;margin-top:12px;">
+      <a href="#" class="ei-link" style="font-size:14px;font-weight:600;" onClick="{{ goRankingsFromHome }}">查看完整排行榜 →</a>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:32px;">
+    <div class="card-kicker" style="margin-bottom:6px;">增长信号</div>
+    <h2 style="font-size:26px;">值得关注的机会</h2>
+    <p style="font-size:14px;opacity:0.7;margin-bottom:20px;">不只看谁增长最多，还可以发现出现特殊增长信号的插件。</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
+      <sc-for list="{{ opportunityModules }}" as="mod" hint-placeholder-count="4">
+        <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+          <h4 style="margin-bottom:2px;">{{ mod.title }}</h4>
+          <p style="font-size:12px;opacity:0.65;margin-bottom:12px;">{{ mod.desc }}</p>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+            <sc-for list="{{ mod.items }}" as="it" hint-placeholder-count="5">
+              <div class="ei-row" style="display:flex;align-items:center;gap:8px;" onClick="{{ it.onClick }}">
+                <span style="width:20px;height:20px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:10px;">{{ it.letter }}</span>
+                <span style="flex:1;font-size:13px;">{{ it.name }}</span>
+                <span class="ei-num" style="font-size:12px;font-weight:600;">{{ it.stat }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <a href="#" class="ei-link" style="font-size:12px;font-weight:600;" onClick="{{ mod.onViewAll }}">查看全部 →</a>
+          <sc-if value="{{ mod.locked }}"><div style="font-size:11px;opacity:0.55;margin-top:4px;">仅展示前 3 项 · 解锁完整机会榜单</div></sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:32px;">
+    <h3 style="font-size:20px;">最近突破</h3>
+    <div class="seg ei-seg" style="margin-bottom:16px;">
+      <sc-for list="{{ milestoneOptions }}" as="opt" hint-placeholder-count="5">
+        <label class="seg-opt"><input type="radio" name="msTab" checked="{{ opt.checked }}" onChange="{{ opt.onSelect }}"><span>{{ opt.label }}</span></label>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;">
+      <sc-for list="{{ recentMilestoneRows }}" as="row" hint-placeholder-count="6">
+        <div class="ei-row" style="display:flex;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid var(--color-divider);" onClick="{{ row.onClick }}">
+          <span style="width:22px;height:22px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:11px;">{{ row.letter }}</span>
+          <span style="flex:1;font-size:14px;font-weight:600;">{{ row.name }}</span>
+          <span style="font-size:13px;opacity:0.65;width:100px;">{{ row.date }}</span>
+          <span style="font-size:13px;font-weight:600;width:140px;text-align:right;">{{ row.summary }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:32px;padding-bottom:20px;display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:center;">
+    <div>
+      <div class="card-kicker" style="margin-bottom:6px;">插件历史分析</div>
+      <h2 style="font-size:26px;">不只是看到今天</h2>
+      <p style="font-size:14px;opacity:0.75;margin-bottom:20px;line-height:1.7;">Chrome Web Store 只能看到插件现在的用户规模。我们自 2023 年起持续记录每日快照，可以看到它是如何一步步增长到今天的。</p>
+      <button class="btn btn-secondary" onClick="{{ goSampleHistory }}">查看插件历史</button>
+    </div>
+    <div style="border:1px solid var(--color-divider);padding:20px;background:var(--color-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="display:flex;justify-content:space-between;font-size:11px;opacity:0.6;margin-bottom:8px;">
+        <span>2年前 · {{ sampleHistory.p0 }}</span>
+        <span>1年前 · {{ sampleHistory.p1 }}</span>
+        <span>今天 · {{ sampleHistory.p2 }}</span>
+      </div>
+      <svg width="100%" height="140" viewBox="0 0 600 140" preserveAspectRatio="none">
+        <path d="{{ sampleHistory.path }}" fill="none" stroke="var(--color-text)" stroke-width="2"></path>
+        <circle cx="{{ sampleHistory.lastX }}" cy="{{ sampleHistory.lastY }}" r="4" fill="var(--color-accent)"></circle>
+      </svg>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:32px;padding-bottom:20px;">
+    <div class="card-kicker" style="margin-bottom:6px;">案例研究</div>
+    <h2 style="font-size:24px;margin-bottom:8px;">一个插件如何从上线增长到 {{ caseStudy.name }} 今天的规模？</h2>
+    <p style="font-size:13px;opacity:0.65;margin-bottom:20px;">原始数据是数字，情报是判断依据 —— 完整历史、里程碑与同类对标共同构成研究结论。</p>
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);background:var(--color-card);padding:24px;">
+      <div>
+        <div style="font-size:12px;opacity:0.6;margin-bottom:8px;">{{ caseStudy.category }} · 用户增长历史（自 2023 年至今）</div>
+        <svg width="100%" height="150" viewBox="0 0 660 150" preserveAspectRatio="none">
+          <path d="{{ caseStudy.path }}" fill="none" stroke="var(--color-accent)" stroke-width="2.5"></path>
+        </svg>
+      </div>
+      <div>
+        <div style="font-size:12px;opacity:0.6;margin-bottom:8px;">里程碑</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+          <sc-for list="{{ caseStudy.milestones }}" as="cm" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;font-size:13px;border-bottom:1px solid var(--color-divider);padding-bottom:6px;">
+              <span>{{ cm.label }} 用户</span>
+              <span style="opacity:0.6;">用时 {{ cm.days }} 天</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:var(--color-accent-700);margin-bottom:14px;">{{ caseStudy.benchmarkText }}</div>
+        <button class="btn btn-secondary" onClick="{{ caseStudy.onOpen }}">查看完整报告 →</button>
+      </div>
+    </div>
+  </section>
+
+
+</main>
+</sc-if>
+
+<!-- ============================= RANKINGS ============================= -->
+<sc-if value="{{ isRankings }}">
+<main style="max-width:1320px;margin:0 auto;padding:0 32px 80px;" data-screen-label="排行榜">
+  <section style="padding-top:40px;">
+    <div class="card-kicker" style="margin-bottom:8px;">排行榜</div>
+    <h1 style="font-size:28px;margin-bottom:8px;">{{ rankingTitle }}</h1>
+    <p style="font-size:14px;opacity:0.7;margin-bottom:24px;">{{ rankingSubtitle }}</p>
+
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px;">
+      <sc-for list="{{ rankingGroups }}" as="grp" hint-placeholder-count="4">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <span style="font-size:12px;opacity:0.55;width:88px;flex:none;">{{ grp.label }}</span>
+          <div class="seg ei-seg">
+            <sc-for list="{{ grp.items }}" as="opt" hint-placeholder-count="3">
+              <label class="seg-opt"><input type="radio" name="rankingTypeSeg" checked="{{ opt.checked }}" onChange="{{ opt.onSelect }}"><span>{{ opt.label }}</span></label>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ rankingMode }}">
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);background:var(--color-card);overflow:hidden;">
+      <sc-if value="{{ isRankingGrowth }}">
+      <table class="table">
+        <thead><tr><th style="width:36px;">#</th><th>插件</th><th class="ei-num">当前用户数</th><th class="ei-num">增长</th><th class="ei-num">增长率</th><th class="ei-num">评分</th><th class="ei-num">评论数</th><th class="ei-num">年龄</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ rankingRowsVisible }}" as="row" hint-placeholder-count="12">
+            <tr class="ei-row" onClick="{{ row.onClick }}">
+              <td style="opacity:0.6;">{{ row.rank }}</td>
+              <td><div style="display:flex;align-items:center;gap:10px;"><span style="width:26px;height:26px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:12px;">{{ row.letter }}</span><span style="font-weight:600;">{{ row.name }}</span><span class="tag tag-neutral" style="font-size:10px;">{{ row.monetization }}</span></div></td>
+              <td class="ei-num">{{ row.users }}</td>
+              <td class="ei-num" style="{{ row.growthStyle }}">{{ row.growth }}</td>
+              <td class="ei-num" style="{{ row.growthStyle }}">{{ row.ratePct }}</td>
+              <td class="ei-num">{{ row.rating }}</td>
+              <td class="ei-num">{{ row.reviews }}</td>
+              <td class="ei-num">{{ row.age }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      </sc-if>
+      <sc-if value="{{ isRankingMilestone }}">
+      <table class="table">
+        <thead><tr><th style="width:36px;">#</th><th>插件</th><th>里程碑</th><th class="ei-num">用时</th><th>达成日期</th><th class="ei-num">当前用户数</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ rankingRowsVisible }}" as="row" hint-placeholder-count="12">
+            <tr class="ei-row" onClick="{{ row.onClick }}">
+              <td style="opacity:0.6;">{{ row.rank }}</td>
+              <td><div style="display:flex;align-items:center;gap:10px;"><span style="width:26px;height:26px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:12px;">{{ row.letter }}</span><span style="font-weight:600;">{{ row.name }}</span></div></td>
+              <td>{{ rankingMilestoneLabel }}</td>
+              <td class="ei-num">{{ row.milestoneDays }}</td>
+              <td>{{ row.milestoneDate }}</td>
+              <td class="ei-num">{{ row.users }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      </sc-if>
+      <sc-if value="{{ isRankingOpportunity }}">
+      <table class="table">
+        <thead><tr><th style="width:36px;">#</th><th>插件</th><th class="ei-num">当前用户数</th><th class="ei-num">信号数值</th><th class="ei-num">评分</th><th class="ei-num">年龄</th></tr></thead>
+        <tbody>
+          <sc-for list="{{ rankingRowsVisible }}" as="row" hint-placeholder-count="12">
+            <tr class="ei-row" onClick="{{ row.onClick }}">
+              <td style="opacity:0.6;">{{ row.rank }}</td>
+              <td><div style="display:flex;align-items:center;gap:10px;"><span style="width:26px;height:26px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:12px;">{{ row.letter }}</span><span style="font-weight:600;">{{ row.name }}</span></div></td>
+              <td class="ei-num">{{ row.users }}</td>
+              <td class="ei-num" style="font-weight:600;">{{ row.oppStat }}</td>
+              <td class="ei-num">{{ row.rating }}</td>
+              <td class="ei-num">{{ row.age }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ rankingLocked }}">
+      <div style="border:1px solid var(--color-divider);background:var(--color-card);padding:24px;text-align:center;margin-top:16px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <div class="card-kicker" style="margin-bottom:6px;">专业版功能</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:10px;">解锁完整排行榜（前 30）</div>
+        <a href="#" class="btn btn-primary" onClick="{{ goPricing }}">查看专业版</a>
+      </div>
+    </sc-if>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+      <button class="btn btn-secondary" disabled="{{ true }}">上一页</button>
+      <button class="btn btn-primary">1</button>
+      <button class="btn btn-secondary" disabled="{{ true }}">下一页</button>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<!-- ============================= MARKET EXPLORER ============================= -->
+<sc-if value="{{ isExplorer }}">
+<main style="max-width:1320px;margin:0 auto;padding:0 32px 80px;" data-screen-label="市场探索">
+  <section style="padding-top:40px;">
+    <div class="card-kicker" style="margin-bottom:8px;">市场探索</div>
+    <h1 style="font-size:30px;">探索 Chrome Extension 市场</h1>
+    <p style="font-size:14px;opacity:0.7;margin-bottom:24px;">从 200K+ 插件中按自定义条件筛选符合要求的研究对象。</p>
+
+    <div style="border:1px solid var(--color-divider);padding:18px;margin-bottom:12px;background:var(--color-surface);border-radius:var(--radius-lg);">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:14px;">
+        <div class="field">
+          <label>最低用户数</label>
+          <select class="input" value="{{ filters.minUsers }}" onChange="{{ onFilterField('minUsers') }}">
+            <option value="all">全部</option><option value="100">100+</option><option value="1k">1K+</option><option value="10k">10K+</option><option value="100k">100K+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>插件年龄（最低）</label>
+          <select class="input" value="{{ filters.minAge }}" onChange="{{ onFilterField('minAge') }}">
+            <option value="all">全部</option><option value="30">30天+</option><option value="180">180天+</option><option value="365">1年+</option><option value="730">2年+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>分类</label>
+          <select class="input" value="{{ filters.category }}" onChange="{{ onFilterField('category') }}">
+            <option value="all">全部分类</option>
+            <sc-for list="{{ categoryOptions }}" as="c" hint-placeholder-count="7"><option value="{{ c }}">{{ c }}</option></sc-for>
+          </select>
+        </div>
+        <div class="field">
+          <label>最低评分</label>
+          <select class="input" value="{{ filters.minRating }}" onChange="{{ onFilterField('minRating') }}">
+            <option value="all">全部</option><option value="4">4.0+</option><option value="4.5">4.5+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>机会标签 <span class="tag tag-outline" style="font-size:9px;padding:1px 6px;margin-left:4px;">专业版</span></label>
+          <select class="input" value="{{ filters.oppTag }}" onChange="{{ onFilterField('oppTag') }}">
+            <option value="all">全部</option><option value="emerging">新兴增长</option><option value="accelerating">增长加速</option><option value="milestone">快速里程碑</option><option value="underradar">低关注高增长</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>商业模式 <span class="tag tag-outline" style="font-size:9px;padding:1px 6px;margin-left:4px;">专业版</span></label>
+          <select class="input" value="{{ filters.monetization }}" onChange="{{ onFilterField('monetization') }}">
+            <option value="all">全部</option>
+            <sc-for list="{{ monetizationOptions }}" as="mo" hint-placeholder-count="5"><option value="{{ mo }}">{{ mo }}</option></sc-for>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;opacity:0.7;white-space:nowrap;flex-shrink:0;">找到 <strong style="opacity:1;">{{ explorerCount }}</strong> 个插件</span>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-secondary" onClick="{{ onClearFilters }}">清除全部</button>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ showAdvancedFilterBanner }}">
+      <div style="border:1px solid var(--color-divider);background:var(--color-accent-100);padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-radius:var(--radius-md);">
+        <span style="font-size:13px;">解锁完整市场研究筛选与排序 →</span>
+        <a href="#" class="btn btn-primary" onClick="{{ goPricing }}">升级解锁高级筛选</a>
+      </div>
+    </sc-if>
+
+    <table class="table" style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <thead>
+        <tr>
+          <th style="width:36px;">#</th>
+          <th>插件</th>
+          <th class="ei-num ei-th" onClick="{{ sortByUsers }}">用户数</th>
+          <th class="ei-num ei-th" onClick="{{ sortByGrowth }}">30日增长</th>
+          <th class="ei-num ei-th" onClick="{{ sortByRate }}">30日增长率</th>
+          <th class="ei-num ei-th" onClick="{{ sortByRating }}">评分</th>
+          <th class="ei-num">评论数</th>
+          <th class="ei-num ei-th" onClick="{{ sortByAge }}">年龄</th>
+          <th>最后更新</th>
+        </tr>
+      </thead>
+      <tbody>
+        <sc-for list="{{ explorerRowsVisible }}" as="row" hint-placeholder-count="12">
+          <tr class="ei-row" onClick="{{ row.onClick }}">
+            <td style="opacity:0.6;">{{ row.rank }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="width:26px;height:26px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:12px;">{{ row.letter }}</span>
+                <div>
+                  <div style="font-weight:600;">{{ row.name }}</div>
+                  <div style="font-size:11px;opacity:0.55;">{{ row.category }}</div>
+                </div>
+                <sc-if value="{{ row.tag }}"><span class="tag tag-accent">{{ row.tag }}</span></sc-if>
+                <span class="tag tag-neutral" style="font-size:10px;">{{ row.monetization }}</span>
+              </div>
+            </td>
+            <td class="ei-num">{{ row.users }}</td>
+            <td class="ei-num" style="{{ row.g30Style }}">{{ row.g30 }}</td>
+            <td class="ei-num" style="{{ row.g30Style }}">{{ row.g30Pct }}</td>
+            <td class="ei-num">{{ row.rating }}</td>
+            <td class="ei-num">{{ row.reviews }}</td>
+            <td class="ei-num">{{ row.age }}</td>
+            <td style="font-size:12px;opacity:0.65;">{{ row.updated }}</td>
+          </tr>
+        </sc-for>
+      </tbody>
+    </table>
+    <sc-if value="{{ explorerLocked }}">
+      <div style="border:1px solid var(--color-divider);background:var(--color-card);padding:24px;text-align:center;margin-top:16px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <div class="card-kicker" style="margin-bottom:6px;">专业版功能</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:10px;">解锁完整筛选结果和高级排序</div>
+        <a href="#" class="btn btn-primary" onClick="{{ goPricing }}">查看专业版</a>
+      </div>
+    </sc-if>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+      <button class="btn btn-secondary" disabled="{{ true }}">上一页</button>
+      <button class="btn btn-primary">1</button>
+      <button class="btn btn-secondary" disabled="{{ true }}">下一页</button>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<!-- ============================= PRICING ============================= -->
+<sc-if value="{{ isPricing }}">
+<main style="max-width:1180px;margin:0 auto;padding:0 32px 80px;" data-screen-label="定价">
+  <section style="padding-top:48px;max-width:640px;">
+    <div class="card-kicker" style="margin-bottom:10px;">方案与定价</div>
+    <h1 style="font-size:30px;margin-bottom:10px;">从免费探索，到完整数据资产</h1>
+    <p style="font-size:14px;opacity:0.7;">三档方案对应三种使用深度 —— 体验产品、自主研究、或获得完整数据集与研究支持。</p>
+  </section>
+
+  <section style="margin-top:32px;margin-bottom:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+    <div style="background:var(--color-card);padding:28px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div class="card-kicker">免费版 · $0</div>
+      <h3 style="font-size:20px;margin:8px 0 4px;">体验产品</h3>
+      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">探索 Chrome Extension 市场情报。</p>
+      <ul style="list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <li>· 搜索插件</li>
+        <li>· 基础插件信息</li>
+        <li>· 排行榜预览（有限结果）</li>
+        <li>· 机会信号预览（Top 3）</li>
+        <li>· 30 天历史分析</li>
+        <li>· 数据集示例数据</li>
+      </ul>
+      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">适合初步了解市场、评估产品是否适合自己。</p>
+      <button class="btn btn-secondary btn-block">当前方案</button>
+    </div>
+    <div style="background:var(--color-card);padding:28px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);">
+      <div class="card-kicker">专业版 · $499/月</div>
+      <h3 style="font-size:20px;margin:8px 0 4px;">自己动手研究市场</h3>
+      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">完整平台功能，深入研究每一个信号。</p>
+      <ul style="list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <li>· 完整排行榜与机会榜</li>
+        <li>· 高级市场探索筛选</li>
+        <li>· 完整插件历史分析（自 2023 年至今）</li>
+        <li>· 同类对标与里程碑分析</li>
+        <li>· Chrome Extension 数据集访问</li>
+        <li>· 数据集历史导出 · 50+ 字段</li>
+      </ul>
+      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">适合独立开发者、Studio 与市场研究人员自主分析。</p>
+      <button class="btn btn-primary btn-block">升级到专业版</button>
+    </div>
+    <div style="background:var(--color-card);padding:28px;border:1px solid var(--color-divider);border-top:3px solid var(--color-accent);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);">
+      <div class="card-kicker">定制情报版 · $1,499/月</div>
+      <h3 style="font-size:20px;margin:8px 0 4px;">数据资产 + 研究支持</h3>
+      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">获得完整数据集，以及我们的研究支持。</p>
+      <ul style="list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <li>· 专业版全部功能</li>
+        <li>· <strong>完整历史数据集</strong>访问权限</li>
+        <li>· 定制市场与关键词研究 <span title="示例：查找某关键词下排名前30的插件；分析竞品标题、描述与元数据；导出插件所有可用语言版本；多插件同类对比；生成自定义 CSV / Excel 研究报告。" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent-700);font-size:10px;font-weight:700;cursor:help;">?</span></li>
+        <li>· Chrome Web Store 关键词排名研究</li>
+        <li>· 竞争对手与本地化研究</li>
+        <li>· 自定义 CSV / Excel 报告</li>
+      </ul>
+      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">适合 Agency、Portfolio 运营者与需要数据+研究支持的团队。</p>
+      <button class="btn btn-primary btn-block">了解定制情报版</button>
+    </div>
+  </section>
+
+  <section style="padding-top:40px;padding-bottom:60px;">
+    <h3 style="font-size:18px;margin-bottom:16px;">方案对比</h3>
+    <table class="table">
+      <thead><tr><th>能力</th><th>免费版</th><th>专业版 $499</th><th>定制情报版 $1,499</th></tr></thead>
+      <tbody>
+        <tr><td>搜索与基础信息</td><td>已包含</td><td>已包含</td><td>已包含</td></tr>
+        <tr><td>排行榜与机会信号</td><td>有限预览</td><td>完整访问</td><td>完整访问</td></tr>
+        <tr><td>市场探索筛选</td><td>基础筛选</td><td>高级筛选</td><td>高级筛选</td></tr>
+        <tr><td>插件历史分析</td><td>30 天</td><td>自 2023 年至今</td><td>自 2023 年至今</td></tr>
+        <tr><td style="font-weight:700;">Chrome Extension 数据集</td><td>示例数据</td><td style="font-weight:700;color:var(--color-accent-700);">完整访问 + 导出</td><td style="font-weight:700;color:var(--color-accent-700);">完整访问 + 导出</td></tr>
+        <tr><td style="font-weight:700;">定制研究支持</td><td>—</td><td>—</td><td style="font-weight:700;color:var(--color-accent-700);">已包含</td></tr>
+        <tr><td>关键词 / 竞品研究</td><td>—</td><td>—</td><td>已包含</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</sc-if>
+
+<!-- ============================= ACCOUNT ============================= -->
+<sc-if value="{{ isAccount }}">
+<main style="max-width:900px;margin:0 auto;padding:0 32px 80px;" data-screen-label="账户">
+  <section style="padding-top:48px;margin-bottom:24px;">
+    <div class="card-kicker" style="margin-bottom:8px;">账户</div>
+    <h1 style="font-size:28px;">账户设置</h1>
+  </section>
+
+  <section style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
+    <div style="background:var(--color-card);padding:20px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:12px;opacity:0.6;margin-bottom:6px;">当前套餐</div>
+      <div style="font-size:18px;font-weight:800;font-family:var(--font-heading);margin-bottom:10px;">{{ accountPlanLabel }}</div>
+      <button class="btn btn-secondary">管理订阅</button>
+    </div>
+    <div style="background:var(--color-card);padding:20px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:12px;opacity:0.6;margin-bottom:6px;">订阅状态</div>
+      <div style="font-size:14px;margin-bottom:10px;">{{ accountStatusText }}</div>
+      <a href="#" class="ei-link" style="font-size:13px;font-weight:600;">查看账单 →</a>
+    </div>
+  </section>
+
+  <section style="background:var(--color-card);padding:20px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);margin-bottom:24px;">
+    <div style="font-size:12px;opacity:0.6;margin-bottom:6px;">数据下载权限</div>
+    <div style="font-size:14px;">{{ accountDownloadText }}</div>
+  </section>
+
+  <sc-if value="{{ isCustom }}">
+  <section style="background:var(--color-card);padding:20px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="card-kicker" style="margin-bottom:6px;">定制情报版</div>
+        <div style="font-size:15px;font-weight:700;">提交定制研究需求</div>
+      </div>
+      <button class="btn btn-primary" onClick="{{ toggleResearchForm }}">提交定制研究需求</button>
+    </div>
+    <sc-if value="{{ showResearchForm }}">
+      <div style="margin-top:18px;display:flex;flex-direction:column;gap:12px;">
+        <div class="field">
+          <label>需求标题</label>
+          <input class="input" value="{{ researchForm.title }}" onChange="{{ onResearchField('title') }}" placeholder="例如：某关键词下的插件竞争分析">
+        </div>
+        <div class="field">
+          <label>需求描述</label>
+          <textarea class="input" value="{{ researchForm.desc }}" onChange="{{ onResearchField('desc') }}" placeholder="描述你希望我们研究的内容"></textarea>
+        </div>
+        <div class="field">
+          <label>希望输出格式</label>
+          <select class="input" value="{{ researchForm.format }}" onChange="{{ onResearchField('format') }}">
+            <option value="CSV">CSV</option><option value="Excel">Excel</option><option value="PDF 报告">PDF 报告</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>可选附件</label>
+          <input class="input" type="file">
+        </div>
+        <button class="btn btn-primary" style="align-self:flex-start;" onClick="{{ submitResearchForm }}">提交需求</button>
+        <sc-if value="{{ researchSubmitted }}"><div style="font-size:13px;color:var(--color-accent-700);font-weight:600;">已提交，我们会在 1-2 个工作日内与你联系。</div></sc-if>
+      </div>
+    </sc-if>
+  </section>
+  </sc-if>
+</main>
+</sc-if>
+
+<!-- ============================= SCHEMA ============================= -->
+<sc-if value="{{ isSchema }}">
+<main style="max-width:1100px;margin:0 auto;padding:0 32px 80px;" data-screen-label="数据字典">
+  <section style="padding-top:48px;max-width:680px;">
+    <div class="card-kicker" style="margin-bottom:8px;">Chrome Extension Dataset</div>
+    <h1 style="font-size:28px;margin-bottom:10px;">Chrome Extension 历史数据集</h1>
+    <p style="font-size:14px;opacity:0.7;">一个持续增长的 Chrome Extension 历史数据库 —— 与单个插件的历史分析是两个独立产品：这里提供跨插件、可下载的完整数据集。</p>
+  </section>
+
+  <section style="padding-top:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:8px;">
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">200K+</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">收录插件</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">自 2023 年</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">每日历史快照</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">50+</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">数据字段 / 插件</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">每日</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">持续更新</div>
+    </div>
+  </section>
+
+  <section style="padding-top:28px;margin-bottom:24px;">
+    <h3 style="font-size:18px;margin-bottom:12px;">Schema 预览</h3>
+    <div style="border:1px solid var(--color-divider);background:var(--color-surface);padding:20px;border-radius:var(--radius-lg);">
+      <sc-for list="{{ fieldSchema }}" as="grp" hint-placeholder-count="5">
+        <div style="margin-bottom:16px;">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;opacity:0.6;margin-bottom:8px;">{{ grp.group }}</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;">
+            <sc-for list="{{ grp.fields }}" as="f" hint-placeholder-count="6">
+              <span style="font-size:13px;opacity:0.75;">· {{ f }}</span>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="padding-bottom:60px;">
+    <h3 style="font-size:18px;margin-bottom:12px;">示例数据预览</h3>
+    <div style="border:1px solid var(--color-divider);margin-bottom:16px;overflow-x:auto;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <table class="table" style="min-width:640px;background:var(--color-card);">
+        <thead><tr>
+          <th>日期</th><th class="ei-num">用户数</th><th class="ei-num">7日增长</th><th class="ei-num">评分</th><th class="ei-num">评论数</th><th class="ei-num">插件排名</th><th>版本</th><th>最后更新</th>
+        </tr></thead>
+        <tbody>
+          <sc-for list="{{ schemaPreviewRows }}" as="r" hint-placeholder-count="6">
+            <tr>
+              <td style="font-size:13px;opacity:0.7;">{{ r.date }}</td>
+              <td class="ei-num">{{ r.users }}</td>
+              <td class="ei-num">{{ r.g7 }}</td>
+              <td class="ei-num">{{ r.rating }}</td>
+              <td class="ei-num">{{ r.reviews }}</td>
+              <td class="ei-num">{{ r.rank }}</td>
+              <td style="font-size:13px;opacity:0.7;">{{ r.version }}</td>
+              <td style="font-size:13px;opacity:0.7;">{{ r.updated }}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-secondary" onClick="{{ onDownloadSchemaSample }}">下载示例 CSV</button>
+      <a href="#" class="btn btn-primary" onClick="{{ goPricing }}">查看专业版，解锁完整数据集下载</a>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<!-- ============================= DETAIL ============================= -->
+<sc-if value="{{ isDetail }}">
+<main style="max-width:1320px;margin:0 auto;padding:0 32px 80px;" data-screen-label="插件详情">
+  <div style="padding-top:20px;font-size:12px;opacity:0.6;margin-bottom:16px;">
+    <a href="#" class="ei-link" onClick="{{ goHome }}">首页</a> / {{ detail.category }} / {{ detail.name }}
+  </div>
+
+  <section style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:28px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span style="width:56px;height:56px;flex:none;background:var(--color-neutral-200);color:var(--color-neutral-800);display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:var(--radius-sm);font-size:22px;">{{ detail.letter }}</span>
+      <div>
+        <h1 style="font-size:28px;margin-bottom:4px;">{{ detail.name }}</h1>
+        <div style="font-size:13px;opacity:0.65;">{{ detail.developer }} · <span class="tag tag-neutral">{{ detail.category }}</span></div>
+      </div>
+    </div>
+    <a href="{{ detail.storeUrl }}" target="_blank" class="btn btn-secondary">在 Chrome Web Store 查看</a>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px;">
+    <sc-for list="{{ detail.coreMetrics }}" as="m" hint-placeholder-count="6">
+      <div style="background:var(--color-card);padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.55;margin-bottom:6px;">{{ m.label }}</div>
+        <div style="font-size:20px;font-weight:800;font-family:var(--font-heading);">{{ m.value }}</div>
+      </div>
+    </sc-for>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:24px;margin-bottom:8px;">
+    <h3 style="font-size:20px;margin-bottom:16px;">近期增长</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      <sc-for list="{{ detail.growthCards }}" as="g" hint-placeholder-count="3">
+        <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+          <div style="font-size:12px;opacity:0.6;margin-bottom:10px;">{{ g.label }}</div>
+          <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);margin-bottom:4px;{{ g.style }}">{{ g.growth }}</div>
+          <div style="font-size:14px;font-weight:600;{{ g.style }}">{{ g.pct }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:24px;">
+    <div class="card-kicker" style="margin-bottom:4px;">Historical Analytics</div>
+    <h3 style="font-size:20px;">历史分析</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:14px 0 18px;">
+      <div class="seg ei-seg">
+        <sc-for list="{{ metricTabs }}" as="opt" hint-placeholder-count="5">
+          <label class="seg-opt"><input type="radio" name="dMetric" checked="{{ opt.checked }}" onChange="{{ opt.onSelect }}"><span>{{ opt.label }}</span></label>
+        </sc-for>
+      </div>
+      <div class="seg ei-seg">
+        <sc-for list="{{ rangeTabs }}" as="opt" hint-placeholder-count="4">
+          <label class="seg-opt"><input type="radio" name="dRange" checked="{{ opt.checked }}" onChange="{{ opt.onSelect }}"><span>{{ opt.label }}</span></label>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ isRankMetric }}"><p style="font-size:11px;opacity:0.55;margin-bottom:8px;">↓ 数字越小排名越好</p></sc-if>
+    <sc-if value="{{ chartLocked }}">
+      <div style="border:1px solid var(--color-divider);padding:48px 16px;background:var(--color-card);text-align:center;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <div class="card-kicker" style="margin-bottom:8px;">专业版功能</div>
+        <h4 style="margin-bottom:8px;">解锁自 2023 年至今的完整历史</h4>
+        <p style="font-size:13px;opacity:0.7;max-width:420px;margin:0 auto 16px;">免费账户仅可查看最近 30 天趋势。升级后可查看 90 天、1 年及自 2023 年至今的完整历史走势。</p>
+        <a href="#" class="btn btn-primary" onClick="{{ goPricing }}">查看专业版</a>
+      </div>
+    </sc-if>
+    <sc-if value="{{ !chartLocked }}">
+    <div style="border:1px solid var(--color-divider);padding:16px 16px 8px;background:var(--color-card);position:relative;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <svg width="100%" height="280" viewBox="0 0 760 260" preserveAspectRatio="none" onMouseMove="{{ onChartMove }}" onMouseLeave="{{ onChartLeave }}" style="cursor:crosshair;">
+        <sc-for list="{{ chartGrid.lines }}" as="ln" hint-placeholder-count="4">
+          <line x1="50" x2="740" y1="{{ ln.y }}" y2="{{ ln.y }}" stroke="var(--color-divider)" stroke-width="1"></line>
+        </sc-for>
+        <path d="{{ chartGeo.path }}" fill="none" stroke="var(--color-text)" stroke-width="2"></path>
+        <sc-if value="{{ chartGeo.hoverPoint }}">
+          <line x1="{{ chartGeo.hoverPoint.x }}" x2="{{ chartGeo.hoverPoint.x }}" y1="20" y2="230" stroke="var(--color-accent)" stroke-width="1" stroke-dasharray="3,3"></line>
+          <circle cx="{{ chartGeo.hoverPoint.x }}" cy="{{ chartGeo.hoverPoint.y }}" r="4" fill="var(--color-accent)"></circle>
+        </sc-if>
+      </svg>
+      <sc-if value="{{ chartGeo.hoverPoint }}">
+        <div style="{{ chartGeo.tooltipStyle }}">
+          <div style="font-size:11px;opacity:0.6;">{{ chartGeo.hoverPoint.date }}</div>
+          <div style="font-size:14px;font-weight:800;font-family:var(--font-heading);">{{ chartGeo.hoverPoint.valueLabel }}</div>
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+  </section>
+
+  <sc-if value="{{ detail.hasSignals }}">
+  <hr class="hr">
+  <section style="padding-top:24px;">
+    <h3 style="font-size:20px;margin-bottom:16px;">为什么值得关注</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+      <sc-for list="{{ detail.signals }}" as="sig" hint-placeholder-count="2">
+        <div class="card elev-sm" style="border-radius:var(--radius-lg);border:1px solid var(--color-divider);background:var(--color-card);">
+          <span class="card-kicker">{{ sig.label }}</span>
+          <div class="card-title">{{ sig.headline }}</div>
+          <p class="card-body">{{ sig.body }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+  </sc-if>
+
+  <hr class="hr">
+
+  <section style="padding-top:24px;">
+    <h3 style="font-size:20px;margin-bottom:20px;">成长时间线</h3>
+    <div style="display:flex;overflow-x:auto;gap:0;padding-bottom:8px;">
+      <sc-for list="{{ detail.timeline }}" as="t" hint-placeholder-count="4">
+        <div style="min-width:150px;flex:1;text-align:left;padding-right:20px;border-right:2px solid var(--color-divider);margin-right:20px;">
+          <div class="tag tag-outline" style="margin-bottom:8px;">{{ t.label }}</div>
+          <div style="font-size:15px;font-weight:800;font-family:var(--font-heading);margin-bottom:2px;">{{ t.date }}</div>
+          <div style="font-size:12px;opacity:0.6;">{{ t.gap }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:24px;">
+    <h3 style="font-size:20px;margin-bottom:16px;">相对市场表现</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      <sc-for list="{{ detail.benchmarks }}" as="b" hint-placeholder-count="3">
+        <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+          <div style="font-size:12px;opacity:0.6;margin-bottom:8px;">{{ b.label }}</div>
+          <sc-if value="{{ b.locked }}">
+            <div style="font-size:14px;font-weight:700;font-family:var(--font-heading);opacity:0.45;">已锁定 · 专业版解锁</div>
+          </sc-if>
+          <sc-if value="{{ !b.locked }}">
+            <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">{{ b.value }}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="padding-top:24px;padding-bottom:20px;">
+    <div style="border:1px solid var(--color-divider);background:var(--color-card);padding:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div>
+        <div class="card-kicker" style="margin-bottom:6px;">Chrome Extension Dataset</div>
+        <div style="font-size:14px;opacity:0.75;">需要跨插件、可下载的完整历史数据集？访问 200K+ 插件、自 2023 年至今的每日历史与 50+ 字段。</div>
+      </div>
+      <a href="#" class="btn btn-primary" onClick="{{ goSchema }}">查看数据集 →</a>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000},&quot;viewerPlan&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;free&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;free&quot;,&quot;professional&quot;,&quot;custom&quot;],&quot;section&quot;:&quot;账户与权限&quot;}}">
+
+const TODAY = new Date('2026-09-15T00:00:00');
+function daysAgoDate(d){ return new Date(TODAY.getTime()-d*86400000); }
+function fmtUsers(n){ n=Math.round(n); const sign=n<0?'-':''; n=Math.abs(n);
+  if(n<10000) return sign+n.toLocaleString('en-US');
+  if(n<1000000) return sign+(n/1000).toFixed(1).replace(/\.0$/,'')+'K';
+  return sign+(n/1000000).toFixed(2).replace(/0$/,'').replace(/\.$/,'')+'M';
+}
+function fmtDelta(n){ const sign=n>=0?'+':'-'; return sign+fmtUsers(Math.abs(Math.round(n))); }
+function fmtPct(p){ const sign=p>=0?'+':''; return sign+p.toFixed(1)+'%'; }
+function fmtDate(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function fmtAge(days){ const y=Math.floor(days/365); const m=Math.round((days%365)/30);
+  if(y>=1) return y+'年'+(m>0? m+'个月':''); return Math.max(1,m)+'个月';
+}
+const NEG_STYLE = 'color:var(--color-danger-700);';
+const POS_STYLE = 'color:var(--color-text);';
+
+const FIELD_SCHEMA = [
+  { group:'插件信息', fields:['extension_id','name','slug','developer_name','developer_email','developer_website','category','subcategory','chrome_store_url','support_url','privacy_policy_url'] },
+  { group:'技术与商店数据', fields:['version','manifest_version','permissions_count','languages_supported','icon_url','screenshot_count','price_model','ad_supported','in_app_purchases','created_date','last_updated'] },
+  { group:'增长数据', fields:['date','users','users_change_1d','users_change_7d','users_change_30d','growth_rate_1d','growth_rate_7d','growth_rate_30d'] },
+  { group:'商店情报', fields:['rating','rating_count','reviews_count','extension_rank_global','extension_rank_category'] },
+  { group:'里程碑与机会信号', fields:['milestone_1k_date','milestone_3k_date','milestone_10k_date','milestone_30k_date','milestone_100k_date','days_to_10k','days_to_100k','is_emerging','is_accelerating','is_fast_milestone','is_under_radar','percentile_growth_30d','percentile_growth_rate_30d','percentile_milestone_speed','data_confidence_score','last_scraped_at'] },
+];
+
+function previewRows(ext){
+  const rows=[];
+  for(let i=5;i>=0;i--){
+    const t = ext.ageDays-i*6;
+    const u = usersAt(ext, Math.max(0,t));
+    const u7ago = usersAt(ext, Math.max(0,t-7));
+    const rating = Math.max(3.2, Math.min(5, ext.rating-0.35*(1-Math.max(0,t)/ext.ageDays)));
+    const rank = Math.max(1, Math.round(2500000/Math.sqrt(u)));
+    rows.push({
+      date: fmtDate(daysAgoDate(ext.ageDays-Math.max(0,t))),
+      users: fmtUsers(u), g7: fmtDelta(u-u7ago), rating: rating.toFixed(2),
+      reviews: fmtUsers(Math.round(u*ext.reviewRatio)), rank: '#'+rank.toLocaleString('en-US'),
+      version: ext.version, updated: fmtDate(ext.lastUpdatedDate),
+    });
+  }
+  return rows;
+}
+
+const BASE = [
+ ['TabFlow','Northlight Labs','效率工具',640,128000,'steady',4.6,0.018],
+ ['GitLens Companion','Anvil Software','开发者工具',210,42000,'accelerating',4.8,0.03],
+ ['PriceGuard','Cartwheel Apps','购物',980,610000,'steady',4.4,0.012],
+ ['Grammar Coach','WordSmith Inc','效率工具',150,18500,'emerging',4.7,0.025],
+ ['ClipSync','Loopware','效率工具',500,76000,'plateau',4.3,0.02],
+ ['SEO Snapshot','RankBridge','SEO工具',720,34000,'decline',4.1,0.015],
+ ['Meeting Recap','Huddle Co','通讯',95,9200,'emerging',4.9,0.04],
+ ['ColorPick Studio','Pixel Foundry','设计工具',860,155000,'steady',4.5,0.016],
+ ['Focus Timer','Calm Cycle','效率工具',300,21000,'accelerating',4.6,0.022],
+ ['Password Vaultly','Ironkey Labs','安全',1050,890000,'steady',4.7,0.01],
+ ['CouponSeeker','Cartwheel Apps','购物',190,15800,'accelerating',4.2,0.028],
+ ['JSON Formatter Plus','Devtool Union','开发者工具',610,205000,'steady',4.8,0.014],
+ ['Ad Silence','QuietWeb','安全',400,62000,'plateau',4.0,0.018],
+ ['LinkedIn Exporter','Prospectly','营销',130,11400,'emerging',4.5,0.03],
+ ['Dark Reader Pro','Nocturne Labs','设计工具',1090,720000,'steady',4.6,0.011],
+ ['Speed Dial X','Northlight Labs','效率工具',780,48000,'decline',4.2,0.017],
+ ['Screenshot Buddy','Loopware','效率工具',60,6200,'emerging',4.8,0.05],
+ ['Keyword Scope','RankBridge','SEO工具',340,27500,'accelerating',4.4,0.02],
+ ['Email Tracker Lite','Prospectly','营销',230,13200,'accelerating',4.1,0.024],
+ ['CSS Peeker','Devtool Union','开发者工具',900,168000,'steady',4.7,0.013],
+ ['VPN Shieldly','Ironkey Labs','安全',560,312000,'steady',4.5,0.009],
+ ['Reading List Zen','Calm Cycle','效率工具',175,8700,'emerging',4.6,0.03],
+ ['Currency Convert+','Cartwheel Apps','购物',1020,445000,'steady',4.3,0.012],
+ ['Slack Status Sync','Huddle Co','通讯',260,19600,'accelerating',4.7,0.021],
+ ['Font Finder','Pixel Foundry','设计工具',470,52000,'plateau',4.4,0.018],
+ ['Site Auditor','RankBridge','SEO工具',220,16200,'emerging',4.6,0.026],
+ ['Tab Suspender','Northlight Labs','效率工具',940,233000,'steady',4.5,0.014],
+ ['Invoice Snap','Ledgerly','效率工具',105,4800,'emerging',4.8,0.045],
+ ['Cold Email Assist','Prospectly','营销',320,24800,'accelerating',4.0,0.022],
+ ['Backlink Watch','RankBridge','SEO工具',690,39500,'decline',4.3,0.016],
+];
+
+function usersAt(ext,t){
+  t = Math.max(0, Math.min(t, ext.ageDays));
+  if(t>=ext.ageDays) { return Math.max(1,Math.round(ext.currentUsers)); }
+  const {currentUsers, profile, ageDays} = ext;
+  if(t===0) return Math.max(5, Math.round(currentUsers*0.002));
+  const frac = t/ageDays;
+  let base;
+  switch(profile){
+    case 'steady': base = currentUsers*Math.pow(frac,1.3); break;
+    case 'accelerating': {
+      const cutover = Math.max(1, ageDays-14);
+      if(t<=cutover){ base = currentUsers*0.55*Math.pow(t/cutover,2.0); }
+      else { const baseAtCut=currentUsers*0.55; const remFrac=(t-cutover)/(ageDays-cutover); base = baseAtCut+(currentUsers-baseAtCut)*Math.pow(remFrac,0.6); }
+      break;
+    }
+    case 'emerging': base = currentUsers*Math.pow(frac,1.15); break;
+    case 'plateau': base = currentUsers*Math.pow(frac,0.4); break;
+    case 'decline': {
+      const peakT = Math.max(1, ageDays-60); const peak = currentUsers*1.1;
+      if(t<=peakT) base = peak*Math.pow(t/peakT,0.45);
+      else { const declineFrac=(t-peakT)/(ageDays-peakT); base = peak-(peak-currentUsers)*declineFrac; }
+      break;
+    }
+    default: base = currentUsers*frac;
+  }
+  const noise = 1+0.008*Math.sin(t*0.6+ext.seed);
+  return Math.max(1, Math.round(base*noise));
+}
+
+function assignPercentile(list,key,dir,target){
+  const withVal = list.filter(e=>e[key]!=null);
+  const sorted=[...withVal].sort((a,b)=> dir==='desc'? b[key]-a[key] : a[key]-b[key]);
+  sorted.forEach((e,i)=>{ e[target]=Math.max(1,Math.round((i+1)/list.length*100)); });
+}
+
+const MONETIZATION_TYPES = ['Free','Freemium','Paid','Subscription','Unknown'];
+function buildExtensions(){
+  const list = BASE.map((row,idx)=>{
+    const [name,developer,category,ageDays,currentUsers,profile,rating,reviewRatio]=row;
+    return { id:'ext-'+(idx+1), slug:name.toLowerCase().replace(/[^a-z0-9]+/g,'-'), name,developer,category,ageDays,currentUsers,profile,rating,reviewRatio, seed: idx*1.37+1, letter: name[0].toUpperCase(), monetization: MONETIZATION_TYPES[idx%MONETIZATION_TYPES.length] };
+  });
+  list.forEach((ext,idx)=>{
+    ext.createdDate = daysAgoDate(ext.ageDays);
+    ext.lastUpdatedDate = daysAgoDate(((idx*13)%18)+1);
+    ext.version = '2.'+((idx*3)%9)+'.'+((idx*7)%10);
+    const cur = ext.currentUsers;
+    const u1 = usersAt(ext, ext.ageDays-1);
+    const u7 = usersAt(ext, Math.max(0,ext.ageDays-7));
+    const u14 = usersAt(ext, Math.max(0,ext.ageDays-14));
+    const u30 = usersAt(ext, Math.max(0,ext.ageDays-30));
+    ext.g1d = cur-u1; ext.g7d = cur-u7; ext.g30d = cur-u30;
+    ext.gPrev7d = u7-u14;
+    ext.g1dPct = u1>0?(ext.g1d/u1*100):0;
+    ext.g7dPct = u7>0?(ext.g7d/u7*100):0;
+    ext.g30dPct = u30>0?(ext.g30d/u30*100):0;
+    ext.reviews = Math.round(cur*ext.reviewRatio);
+    ext.overallRank = Math.max(1,Math.round(2500000/Math.sqrt(cur)));
+    ext.categoryRank = Math.max(1,Math.round(90000/Math.sqrt(cur)));
+    const thresholds=[1000,3000,10000,30000,100000];
+    ext.milestones={};
+    thresholds.forEach(th=>{
+      if(cur>=th){
+        let t=0; while(t<ext.ageDays && usersAt(ext,t)<th){ t++; }
+        ext.milestones[th]={days:t, date:daysAgoDate(ext.ageDays-t)};
+      }
+    });
+    const m=ext.milestones;
+    ext.milestoneGap = (m[3000]&&m[10000])? m[10000].days-m[3000].days : (m[1000]&&m[10000]? m[10000].days-m[1000].days : null);
+  });
+  assignPercentile(list,'g30d','desc','g30dRankPct');
+  assignPercentile(list,'g30dPct','desc','g30dPctRankPct');
+  assignPercentile(list,'milestoneGap','asc','milestoneRankPct');
+  list.forEach(ext=>{
+    ext.flagEmerging = ext.ageDays<260 && ext.currentUsers>=3000;
+    ext.flagAccelerating = ext.gPrev7d>20 && ext.g7d>ext.gPrev7d*1.5;
+    ext.flagFastMilestone = ext.milestoneGap!=null && ext.milestoneRankPct<=25;
+    ext.flagUnderRadar = ext.currentUsers<30000 && ext.g30dPct>10 && !ext.flagEmerging;
+  });
+  return list;
+}
+
+function buildChartSeries(ext, metric, range){
+  const rangeDays = {'30d':30,'90d':90,'1y':365,'3y':1095}[range];
+  const actual = Math.min(rangeDays, ext.ageDays);
+  const startT = ext.ageDays-actual;
+  const steps = Math.min(actual||1, 48);
+  const stepSize = Math.max(1, Math.round((actual||1)/steps));
+  const ts=[];
+  for(let t=startT; t<ext.ageDays; t+=stepSize){ ts.push(t); }
+  ts.push(ext.ageDays);
+  const valueAt=(t)=>{
+    if(metric==='users') return usersAt(ext,t);
+    if(metric==='reviews') return Math.round(usersAt(ext,t)*ext.reviewRatio);
+    if(metric==='rating') return Math.max(3.2, Math.min(5, ext.rating-0.35*(1-t/ext.ageDays)));
+    if(metric==='extRank') return Math.max(1,Math.round(90000/Math.sqrt(usersAt(ext,t))));
+    return Math.max(1,Math.round(2500000/Math.sqrt(usersAt(ext,t))));
+  };
+  return ts.map(t=>({ t, date: daysAgoDate(ext.ageDays-t), value: valueAt(t) }));
+}
+
+const RANKING_CONFIG = {
+  '1d_growth': { mode:'growth', period:'1d', title:'过去 1 天用户增长最快的 Chrome Extensions', subtitle:'按 1 日绝对增长人数排序，展示前 30 个插件。' },
+  '7d_growth': { mode:'growth', period:'7d', title:'过去 7 天用户增长最快的 Chrome Extensions', subtitle:'按 7 日绝对增长人数排序，展示前 30 个插件。' },
+  '30d_growth': { mode:'growth', period:'30d', title:'过去 30 天用户增长最快的 Chrome Extensions', subtitle:'按 30 日绝对增长人数排序，展示前 30 个插件。' },
+  '7d_rate': { mode:'growth', period:'7d', sortRate:true, title:'过去 7 天增长率最高的 Chrome Extensions', subtitle:'按 7 日增长率排序，展示前 30 个插件。' },
+  '30d_rate': { mode:'growth', period:'30d', sortRate:true, title:'过去 30 天增长率最高的 Chrome Extensions', subtitle:'按 30 日增长率排序，展示前 30 个插件。' },
+  'fast_1k': { mode:'milestone', threshold:1000, title:'最快达到 1K 用户的 Chrome Extensions', subtitle:'按创建至首次达到 1,000 用户所需天数排序。' },
+  'fast_10k': { mode:'milestone', threshold:10000, title:'最快达到 10K 用户的 Chrome Extensions', subtitle:'按创建至首次达到 10,000 用户所需天数排序。' },
+  'fast_100k': { mode:'milestone', threshold:100000, title:'最快达到 100K 用户的 Chrome Extensions', subtitle:'按创建至首次达到 100,000 用户所需天数排序。' },
+  'opp_new': { mode:'opportunity', flag:'flagEmerging', title:'新兴增长', subtitle:'上线时间较短，但已经快速获得用户。' },
+  'opp_accel': { mode:'opportunity', flag:'flagAccelerating', title:'增长加速', subtitle:'最近的增长速度明显高于上一周期。' },
+  'opp_underradar': { mode:'opportunity', flag:'flagUnderRadar', title:'低关注高增长', subtitle:'当前规模仍有限，但增长表现已经明显突出。' },
+};
+const RANKING_GROUPS_DEF = [
+  { label:'增长排行', items:[['1d_growth','1日'],['7d_growth','7日'],['30d_growth','30日']] },
+  { label:'增长率排行', items:[['7d_rate','7日'],['30d_rate','30日']] },
+  { label:'里程碑速度', items:[['fast_1k','1K'],['fast_10k','10K'],['fast_100k','100K']] },
+  { label:'机会信号', items:[['opp_new','新兴增长'],['opp_accel','增长加速'],['opp_underradar','低关注高增长']] },
+];
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    if(!Component._data) Component._data = buildExtensions();
+    this.extensions = Component._data;
+    this.state = {
+      page: 'home',
+      searchQuery: '',
+      rankingType: '7d_growth',
+      milestoneTab: '10000',
+      detailId: this.extensions[0].id,
+      detailMetricTab: 'users', detailTimeTab: '1y', hoverIdx: null,
+      filters: { minUsers:'all', minAge:'all', category:'all', minRating:'all', oppTag:'all', monetization:'all' },
+      explorerSort: { key:'growth', dir:'desc' },
+      showFieldSchema: false,
+      showResearchForm: false,
+      researchForm: { title:'', desc:'', format:'CSV' },
+      researchSubmitted: false,
+    };
+  }
+  setPage = (p) => { this.setState({ page: p, hoverIdx: null }); if(typeof window!=='undefined') window.scrollTo(0,0); }
+  goHome = (e) => { if(e) e.preventDefault(); this.setPage('home'); }
+  goRankingsNav = (e) => { if(e) e.preventDefault(); this.setPage('rankings'); }
+  goRankings = (type) => { this.setState({ page:'rankings', rankingType: type }); if(typeof window!=='undefined') window.scrollTo(0,0); }
+  goRankingsFromHome = (e) => { if(e) e.preventDefault(); this.goRankings('7d_growth'); }
+  goExplorer = (e) => { if(e) e.preventDefault(); this.setPage('explorer'); }
+  goPricing = (e) => { if(e) e.preventDefault(); this.setPage('pricing'); }
+  goAccount = (e) => { if(e) e.preventDefault(); this.setPage('account'); }
+  goSchema = (e) => { if(e) e.preventDefault(); this.setPage('schema'); }
+  toggleFieldSchema = () => this.setState(s => ({ showFieldSchema: !s.showFieldSchema }))
+  openExtension = (id) => { this.setState({ page:'detail', detailId:id, detailMetricTab:'users', detailTimeTab:'1y', hoverIdx:null }); if(typeof window!=='undefined') window.scrollTo(0,0); }
+  noop = () => {}
+  onSearchChange = (e) => this.setState({ searchQuery: e.target.value })
+  minUsersValue(key){ return {all:0,'100':100,'1k':1000,'10k':10000,'100k':100000}[key]||0; }
+  getGrowth(ext,period){ return period==='1d'?ext.g1d: period==='30d'?ext.g30d: ext.g7d; }
+  getGrowthPct(ext,period){ return period==='1d'?ext.g1dPct: period==='30d'?ext.g30dPct: ext.g7dPct; }
+  setRankingType = (t) => this.setState({ rankingType: t })
+  onFilterField(key){ return (e) => this.setState(s => ({ filters: { ...s.filters, [key]: e.target.value } })); }
+  onClearFilters = () => this.setState({ filters: { minUsers:'all', minAge:'all', category:'all', minRating:'all', oppTag:'all', monetization:'all' } })
+  setExplorerSort = (key) => this.setState(s => ({ explorerSort: s.explorerSort.key===key ? { key, dir: s.explorerSort.dir==='desc'?'asc':'desc' } : { key, dir:'desc' } }))
+  setMilestoneTab = (t) => this.setState({ milestoneTab: t })
+  setDetailMetricTab = (t) => this.setState({ detailMetricTab: t, hoverIdx: null })
+  setDetailTimeTab = (t) => this.setState({ detailTimeTab: t, hoverIdx: null })
+  goSampleHistory = () => this.openExtension(this.extensions[2].id)
+  toggleResearchForm = () => this.setState(s => ({ showResearchForm: !s.showResearchForm }))
+  onResearchField(key){ return (e) => this.setState(s => ({ researchForm: { ...s.researchForm, [key]: e.target.value } })); }
+  submitResearchForm = () => this.setState({ researchSubmitted: true })
+  onChartMove = (e) => {
+    const geo = this._lastGeo; if(!geo) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX-rect.left)*(geo.w/rect.width);
+    let idx=0, best=Infinity;
+    geo.pts.forEach((p,i)=>{ const d=Math.abs(p.x-x); if(d<best){ best=d; idx=i; } });
+    this.setState({ hoverIdx: idx });
+  }
+  onChartLeave = () => this.setState({ hoverIdx: null })
+  downloadCsv(ext, range){
+    const days = range==='sample'?30:(range==='1y'?365:1095);
+    const actual = Math.min(days, ext.ageDays);
+    const rows = ['date,users'];
+    for(let t=ext.ageDays-actual; t<=ext.ageDays; t++){ rows.push(fmtDate(daysAgoDate(ext.ageDays-t))+','+usersAt(ext,t)); }
+    const blob = new Blob([rows.join('\n')], { type:'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = ext.slug+'-history-'+range+'.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  buildChartGeometry(series, metric, hoverIdx){
+    const invert = metric==='extRank' || metric==='overallRank';
+    const w=760,h=260,padL=50,padR=20,padT=20,padB=30;
+    const rawVals = series.map(p=> invert? -p.value : p.value);
+    const min = Math.min(...rawVals), max = Math.max(...rawVals);
+    const range = (max-min)||1;
+    const n = series.length;
+    const pts = series.map((p,i)=>{
+      const x = padL + (n>1? (i/(n-1)) : 0)*(w-padL-padR);
+      const v = invert? -p.value : p.value;
+      const y = padT + (1-(v-min)/range)*(h-padT-padB);
+      let valueLabel;
+      if(metric==='users') valueLabel = fmtUsers(p.value);
+      else if(metric==='reviews') valueLabel = fmtUsers(p.value);
+      else if(metric==='rating') valueLabel = p.value.toFixed(2);
+      else valueLabel = '#'+Math.round(p.value).toLocaleString('en-US');
+      return { x, y, date: fmtDate(p.date), value: p.value, valueLabel };
+    });
+    const path = pts.map((p,i)=> (i===0?'M':'L')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+    const hoverPoint = (hoverIdx!=null && pts[hoverIdx]) ? pts[hoverIdx] : null;
+    let tooltipStyle = '';
+    if(hoverPoint){
+      const leftPct = (hoverPoint.x/w*100);
+      tooltipStyle = 'position:absolute;top:14px;left:'+leftPct+'%;transform:translateX(-50%);background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-sm);padding:8px 12px;box-shadow:var(--shadow-md);pointer-events:none;white-space:nowrap;';
+    }
+    return { w, h, pts, path, hoverPoint, tooltipStyle };
+  }
+  renderVals(){
+    const viewerPlan = this.props.viewerPlan || 'free';
+    const isFree = viewerPlan==='free', isPro = viewerPlan==='professional', isCustom = viewerPlan==='custom';
+    const { page, filters } = this.state;
+    const periodLabelMap = { '1d':'1日', '7d':'7日', '30d':'30日' };
+
+    const searchQuery = this.state.searchQuery;
+    const hasSuggestions = searchQuery.length>0;
+    const suggestions = hasSuggestions ? this.extensions.filter(e=>e.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0,6).map(e=>({ letter:e.letter, name:e.name, users:fmtUsers(e.currentUsers), onClick:()=>this.openExtension(e.id) })) : [];
+
+    const homePreview = [...this.extensions].sort((a,b)=>b.g7d-a.g7d).slice(0,8);
+    const homePreviewRows = homePreview.map((e,i)=>({
+      rank:i+1, letter:e.letter, name:e.name, onClick:()=>this.openExtension(e.id),
+      users: fmtUsers(e.currentUsers),
+      growth: (e.g7d>=0?'▲ ':'▼ ')+fmtDelta(e.g7d), ratePct: fmtPct(e.g7dPct),
+      growthStyle: e.g7d>=0?POS_STYLE:NEG_STYLE,
+    }));
+
+    const oppList = {
+      emerging: [...this.extensions].filter(e=>e.flagEmerging).sort((a,b)=>b.g30d-a.g30d),
+      accelerating: [...this.extensions].filter(e=>e.flagAccelerating).sort((a,b)=> (b.g7d/Math.max(1,b.gPrev7d)) - (a.g7d/Math.max(1,a.gPrev7d))),
+      milestone: [...this.extensions].filter(e=>e.flagFastMilestone).sort((a,b)=>a.milestoneRankPct-b.milestoneRankPct),
+      underradar: [...this.extensions].filter(e=>e.flagUnderRadar).sort((a,b)=>b.g30dPct-a.g30dPct),
+    };
+    const oppPreviewCount = isFree ? 3 : 5;
+    const mkModule = (title, desc, key, rankingType, statFn) => ({
+      title, desc,
+      items: oppList[key].slice(0,oppPreviewCount).map(e=>({ letter:e.letter, name:e.name, stat: statFn(e), onClick: ()=>this.openExtension(e.id) })),
+      locked: isFree && oppList[key].length>oppPreviewCount,
+      onViewAll: () => this.goRankings(rankingType),
+    });
+    const opportunityModules = [
+      mkModule('新兴增长','上线时间较短，但已经快速获得用户。','emerging','opp_new', e=>'30天 '+fmtDelta(e.g30d)),
+      mkModule('增长加速','最近的增长速度明显高于上一周期。','accelerating','opp_accel', e=>'增长速度 '+fmtPct(((e.g7d/Math.max(1,e.gPrev7d))-1)*100)),
+      mkModule('快速里程碑','以异常快的速度达到关键用户规模。','milestone','fast_10k', e=>{ const th=[100000,30000,10000,3000,1000].find(t=>e.milestones[t]); return th? e.milestones[th].days+'天达到'+fmtUsers(th) : ''; }),
+      mkModule('低关注高增长','当前规模仍有限，但增长表现已经明显突出。','underradar','opp_underradar', e=>fmtUsers(e.currentUsers)+' · 30日'+fmtDelta(e.g30d)),
+    ];
+
+    const milestoneLabels = { '1000':'1K','3000':'3K','10000':'10K','30000':'30K','100000':'100K' };
+    const milestoneOptions = Object.keys(milestoneLabels).map(k=>({ label: milestoneLabels[k], checked: k===this.state.milestoneTab, onSelect: ()=>this.setMilestoneTab(k) }));
+    const recentMilestoneRows = this.extensions.filter(e=>e.milestones[this.state.milestoneTab]).map(e=>({ e, m: e.milestones[this.state.milestoneTab] })).sort((a,b)=>b.m.date-a.m.date).slice(0,8).map(({e,m})=>({ letter:e.letter, name:e.name, date: fmtDate(m.date), summary: m.days+' 天达到 '+milestoneLabels[this.state.milestoneTab], onClick: ()=>this.openExtension(e.id) }));
+
+    const caseExt = this.extensions.find(e=>e.flagFastMilestone && e.currentUsers>=100000) || this.extensions.find(e=>e.currentUsers>=100000) || this.extensions[0];
+    const caseSeries = buildChartSeries(caseExt, 'users', '3y');
+    const caseGeo = this.buildChartGeometry(caseSeries, 'users', null);
+    const caseMilestoneOrder = [1000,3000,10000,30000,100000].filter(th=>caseExt.milestones[th]);
+    const caseMilestones = caseMilestoneOrder.map((th,i)=>{
+      const prevDays = i===0 ? 0 : caseExt.milestones[caseMilestoneOrder[i-1]].days;
+      return { label: fmtUsers(th), days: caseExt.milestones[th].days-prevDays };
+    });
+    const caseStudy = {
+      name: caseExt.name, category: caseExt.category,
+      path: caseGeo.pts.map((p,i)=>(i===0?'M':'L')+(p.x*0.86).toFixed(1)+','+(p.y*0.55).toFixed(1)).join(' '),
+      milestones: caseMilestones,
+      benchmarkText: caseExt.milestoneRankPct!=null ? '达到关键规模速度 Top '+caseExt.milestoneRankPct+'%，领先同类插件' : '当前用户规模 '+fmtUsers(caseExt.currentUsers),
+      onOpen: ()=>this.openExtension(caseExt.id),
+    };
+
+    const sampleExt = this.extensions[2];
+    const sampleSeries = buildChartSeries(sampleExt, 'users', '3y');
+    const sGeo = this.buildChartGeometry(sampleSeries, 'users', null);
+    const sampleHistory = {
+      p0: fmtUsers(sampleSeries[0].value), p1: fmtUsers(sampleSeries[Math.floor(sampleSeries.length/2)].value), p2: fmtUsers(sampleExt.currentUsers),
+      path: sGeo.pts.map((p,i)=>(i===0?'M':'L')+(p.x*0.79).toFixed(1)+','+(p.y*0.5).toFixed(1)).join(' '),
+      lastX: (sGeo.pts[sGeo.pts.length-1].x*0.79).toFixed(1), lastY: (sGeo.pts[sGeo.pts.length-1].y*0.5).toFixed(1),
+    };
+
+    // Rankings page
+    const cfg = RANKING_CONFIG[this.state.rankingType];
+    let rList;
+    if(cfg.mode==='growth'){
+      rList = [...this.extensions].sort((a,b)=> cfg.sortRate ? this.getGrowthPct(b,cfg.period)-this.getGrowthPct(a,cfg.period) : this.getGrowth(b,cfg.period)-this.getGrowth(a,cfg.period));
+    } else if(cfg.mode==='milestone'){
+      rList = this.extensions.filter(e=>e.milestones[cfg.threshold]).sort((a,b)=>a.milestones[cfg.threshold].days-b.milestones[cfg.threshold].days);
+    } else {
+      rList = this.extensions.filter(e=>e[cfg.flag]).sort((a,b)=>b.g30d-a.g30d);
+    }
+    const rankingRows = rList.slice(0,30).map((e,i)=>{
+      const base = { rank:i+1, letter:e.letter, name:e.name, monetization:e.monetization, users: fmtUsers(e.currentUsers), rating:e.rating.toFixed(1), reviews:fmtUsers(e.reviews), age:fmtAge(e.ageDays), onClick:()=>this.openExtension(e.id) };
+      if(cfg.mode==='growth'){
+        const g=this.getGrowth(e,cfg.period), gp=this.getGrowthPct(e,cfg.period);
+        return { ...base, growth:(g>=0?'▲ ':'▼ ')+fmtDelta(g), ratePct:fmtPct(gp), growthStyle:g>=0?POS_STYLE:NEG_STYLE };
+      }
+      if(cfg.mode==='milestone'){
+        const m=e.milestones[cfg.threshold];
+        return { ...base, milestoneDays:m.days+' 天', milestoneDate:fmtDate(m.date) };
+      }
+      let oppStat='';
+      if(cfg.flag==='flagEmerging') oppStat='30天 '+fmtDelta(e.g30d);
+      else if(cfg.flag==='flagAccelerating') oppStat='增长速度 '+fmtPct(((e.g7d/Math.max(1,e.gPrev7d))-1)*100);
+      else oppStat='30日 '+fmtDelta(e.g30d)+' ('+fmtPct(e.g30dPct)+')';
+      return { ...base, oppStat };
+    });
+    const rankingCap = (cfg.mode==='opportunity' && isFree) ? 3 : (isFree ? 10 : 30);
+    const rankingRowsVisible = rankingRows.slice(0,rankingCap);
+    const rankingLocked = isFree && rankingRows.length>rankingCap;
+    const rankingGroups = RANKING_GROUPS_DEF.map(g=>({ label:g.label, items: g.items.map(([v,l])=>({ label:l, checked: v===this.state.rankingType, onSelect: ()=>this.setRankingType(v) })) }));
+    const milestoneThresholdLabel = { 1000:'1K',10000:'10K',100000:'100K' };
+
+    // Market Explorer page
+    const categoryOptions = [...new Set(this.extensions.map(e=>e.category))];
+    const monetizationOptions = MONETIZATION_TYPES;
+    const minUsers = this.minUsersValue(filters.minUsers);
+    let explorerList = this.extensions.filter(e=>{
+      if(minUsers>0 && e.currentUsers<minUsers) return false;
+      if(filters.minAge!=='all' && e.ageDays<parseInt(filters.minAge)) return false;
+      if(filters.category!=='all' && e.category!==filters.category) return false;
+      if(filters.minRating!=='all' && e.rating<parseFloat(filters.minRating)) return false;
+      if(filters.oppTag!=='all'){
+        if(filters.oppTag==='emerging' && !e.flagEmerging) return false;
+        if(filters.oppTag==='accelerating' && !e.flagAccelerating) return false;
+        if(filters.oppTag==='milestone' && !e.flagFastMilestone) return false;
+        if(filters.oppTag==='underradar' && !e.flagUnderRadar) return false;
+      }
+      if(filters.monetization!=='all' && e.monetization!==filters.monetization) return false;
+      return true;
+    });
+    const sortKeyMap = { users:'currentUsers', growth:'g30d', rate:'g30dPct', rating:'rating', age:'ageDays' };
+    const sk = sortKeyMap[this.state.explorerSort.key] || 'g30d';
+    explorerList = [...explorerList].sort((a,b)=> this.state.explorerSort.dir==='desc' ? b[sk]-a[sk] : a[sk]-b[sk]);
+    const explorerCount = explorerList.length;
+    const advancedFilterActive = filters.oppTag!=='all' || filters.monetization!=='all';
+    const showAdvancedFilterBanner = isFree && advancedFilterActive;
+    const tagLabel = { emerging:'新兴增长', accelerating:'增长加速', milestone:'快速里程碑', underradar:'低关注高增长' };
+    const explorerRows = explorerList.slice(0,30).map((e,i)=>({
+      rank:i+1, letter:e.letter, name:e.name, category:e.category, monetization:e.monetization,
+      tag: e.flagEmerging?tagLabel.emerging: e.flagAccelerating?tagLabel.accelerating: e.flagFastMilestone?tagLabel.milestone: e.flagUnderRadar?tagLabel.underradar: '',
+      users: fmtUsers(e.currentUsers),
+      g30: (e.g30d>=0?'▲ ':'▼ ')+fmtDelta(e.g30d), g30Pct: fmtPct(e.g30dPct), g30Style: e.g30d>=0?POS_STYLE:NEG_STYLE,
+      rating: e.rating.toFixed(1), reviews: fmtUsers(e.reviews), age: fmtAge(e.ageDays), updated: fmtDate(e.lastUpdatedDate),
+      onClick: ()=>this.openExtension(e.id),
+    }));
+    const explorerRowsVisible = isFree ? explorerRows.slice(0,10) : explorerRows;
+    const explorerLocked = isFree && explorerRows.length>10;
+
+    // Account page
+    const planLabelMap = { free:'免费用户', professional:'专业版 · $499/月', custom:'定制情报版 · $1,499/月' };
+    const accountPlanLabel = planLabelMap[viewerPlan];
+    const accountStatusText = isFree ? '免费账户，随时可升级。' : '有效订阅，下次续费日期 2026-10-15。';
+    const accountDownloadText = isFree ? '升级后可下载历史数据。' : isPro ? '可下载最近 1 年历史数据（自 2023 年起）。' : '可下载完整历史数据集（自 2023 年至今）。';
+
+    // Schema page
+    const schemaExt = this.extensions[0];
+    const schemaPreviewRows = previewRows(schemaExt);
+    const onDownloadSchemaSample = ()=>this.downloadCsv(schemaExt,'sample');
+
+    // Detail page
+    const detailExt = this.extensions.find(e=>e.id===this.state.detailId) || this.extensions[0];
+    const detail = {
+      name: detailExt.name, developer: detailExt.developer, category: detailExt.category, letter: detailExt.letter,
+      storeUrl: 'https://chromewebstore.google.com/detail/'+detailExt.slug,
+      coreMetrics: [
+        { label:'当前用户数', value: fmtUsers(detailExt.currentUsers) },
+        { label:'评分', value: detailExt.rating.toFixed(1) },
+        { label:'评论数量', value: fmtUsers(detailExt.reviews) },
+        { label:'插件年龄', value: fmtAge(detailExt.ageDays) },
+        { label:'当前版本', value: detailExt.version },
+        { label:'最后更新', value: fmtDate(detailExt.lastUpdatedDate) },
+      ],
+      growthCards: ['1d','7d','30d'].map(p=>{
+        const g=this.getGrowth(detailExt,p), gp=this.getGrowthPct(detailExt,p);
+        return { label: periodLabelMap[p], growth: (g>=0?'▲ ':'▼ ')+fmtDelta(g), pct: fmtPct(gp), style: g>=0?POS_STYLE:NEG_STYLE };
+      }),
+      hasSignals: detailExt.flagAccelerating || detailExt.flagFastMilestone || detailExt.flagEmerging || detailExt.flagUnderRadar,
+      signals: [
+        detailExt.flagAccelerating ? { label:'增长加速', headline:'7日增长环比提升 '+Math.round(((detailExt.g7d/Math.max(1,detailExt.gPrev7d))-1)*100)+'%', body:'上一周期 '+fmtDelta(detailExt.gPrev7d)+'，本周期 '+fmtDelta(detailExt.g7d)+'。' } : null,
+        detailExt.flagFastMilestone ? { label:'快速里程碑', headline:'达到关键用户规模的速度领先同类 '+(100-detailExt.milestoneRankPct)+'%', body: detailExt.milestoneGap+' 天完成关键跃升，同类插件里程碑速度 Top '+detailExt.milestoneRankPct+'%。' } : null,
+        detailExt.flagEmerging ? { label:'新兴增长', headline:'上线 '+detailExt.ageDays+' 天，当前 '+fmtUsers(detailExt.currentUsers)+' 用户', body:'较短时间内已获得可观用户基础。' } : null,
+        detailExt.flagUnderRadar ? { label:'低关注高增长', headline: fmtUsers(detailExt.currentUsers)+' 用户，30日增长 '+fmtPct(detailExt.g30dPct), body:'规模尚小，但增长表现已经突出。' } : null,
+      ].filter(Boolean),
+      timeline: [
+        { label:'创建', date: fmtDate(detailExt.createdDate), gap:'' },
+        ...[1000,3000,10000,30000,100000].filter(th=>detailExt.milestones[th]).map((th,i,arr)=>{
+          const m = detailExt.milestones[th];
+          const prevDays = i===0 ? 0 : detailExt.milestones[arr[i-1]].days;
+          return { label: fmtUsers(th), date: fmtDate(m.date), gap: (m.days-prevDays)+' 天' };
+        }),
+      ],
+      benchmarks: [
+        { label:'30日增长人数（同规模插件）', value: detailExt.g30dRankPct!=null ? 'Top '+detailExt.g30dRankPct+'%' : '数据不足', locked:false },
+        { label:'30日增长率（同规模插件）', value: detailExt.g30dPctRankPct!=null ? 'Top '+detailExt.g30dPctRankPct+'%' : '数据不足', locked:isFree },
+        { label:'里程碑速度（历史同类插件）', value: detailExt.milestoneRankPct!=null && detailExt.milestoneGap!=null ? 'Top '+detailExt.milestoneRankPct+'%' : '数据不足', locked:isFree },
+      ],
+    };
+    const previewData = previewRows(detailExt);
+
+    const metricTabList = [ {v:'users',l:'用户量'}, {v:'reviews',l:'评论数'}, {v:'rating',l:'评分'}, {v:'extRank',l:'插件排名'}, {v:'overallRank',l:'总体排名'} ];
+    const metricTabs = metricTabList.map(o=>({ label:o.l, checked:o.v===this.state.detailMetricTab, onSelect: ()=>this.setDetailMetricTab(o.v) }));
+    const rangeTabList = [ {v:'30d',l:'30D'}, {v:'90d',l:'90D'}, {v:'1y',l:'1Y'}, {v:'3y',l:'3Y'} ];
+    const rangeTabs = rangeTabList.map(o=>({ label:o.l, checked:o.v===this.state.detailTimeTab, onSelect: ()=>this.setDetailTimeTab(o.v) }));
+    const isRankMetric = this.state.detailMetricTab==='extRank' || this.state.detailMetricTab==='overallRank';
+    const series = buildChartSeries(detailExt, this.state.detailMetricTab, this.state.detailTimeTab);
+    const chartGeo = this.buildChartGeometry(series, this.state.detailMetricTab, this.state.hoverIdx);
+    this._lastGeo = chartGeo;
+    const chartGrid = { lines: [0.25,0.5,0.75].map(f=>({ y: 20+f*(260-20-30) })) };
+    const chartLocked = isFree && this.state.detailTimeTab!=='30d';
+
+    const isFreeActive = isFree;
+    const tierBgFree = isFree ? 'var(--color-accent-100)' : 'var(--color-card)';
+    const tierBgPro = isPro ? 'var(--color-accent-100)' : 'var(--color-card)';
+    const tierBgCustom = isCustom ? 'var(--color-accent-100)' : 'var(--color-card)';
+    const canDownload1y = isPro || isCustom;
+    const canDownload3y = isCustom;
+
+    return {
+      isHome: page==='home', isRankings: page==='rankings', isExplorer: page==='explorer', isDetail: page==='detail', isPricing: page==='pricing', isAccount: page==='account', isSchema: page==='schema',
+      homeCurrentAttr: page==='home' ? 'page' : null, rankingsCurrentAttr: page==='rankings' ? 'page' : null, explorerCurrentAttr: page==='explorer' ? 'page' : null, pricingCurrentAttr: page==='pricing' ? 'page' : null, accountCurrentAttr: page==='account' ? 'page' : null, schemaCurrentAttr: page==='schema' ? 'page' : null,
+      goHome: this.goHome, goRankingsNav: this.goRankingsNav, goRankingsFromHome: this.goRankingsFromHome, goExplorer: this.goExplorer, goPricing: this.goPricing, goAccount: this.goAccount, goSchema: this.goSchema, goSampleHistory: this.goSampleHistory,
+      searchQuery, onSearchChange: this.onSearchChange, hasSuggestions, suggestions,
+      homePreviewRows, opportunityModules, milestoneOptions, recentMilestoneRows, sampleHistory, caseStudy,
+      rankingGroups, rankingTitle: cfg.title, rankingSubtitle: cfg.subtitle, rankingMode: cfg.mode,
+      isRankingGrowth: cfg.mode==='growth', isRankingMilestone: cfg.mode==='milestone', isRankingOpportunity: cfg.mode==='opportunity',
+      rankingMilestoneLabel: cfg.mode==='milestone' ? milestoneThresholdLabel[cfg.threshold] : '',
+      rankingRowsVisible, rankingLocked,
+      categoryOptions, monetizationOptions, filters, onFilterField: (k)=>this.onFilterField(k), onClearFilters: this.onClearFilters,
+      explorerCount, explorerRowsVisible, explorerLocked, showAdvancedFilterBanner,
+      sortByUsers: ()=>this.setExplorerSort('users'), sortByGrowth: ()=>this.setExplorerSort('growth'), sortByRate: ()=>this.setExplorerSort('rate'), sortByRating: ()=>this.setExplorerSort('rating'), sortByAge: ()=>this.setExplorerSort('age'),
+      accountPlanLabel, accountStatusText, accountDownloadText, isCustom,
+      showResearchForm: this.state.showResearchForm, toggleResearchForm: this.toggleResearchForm, researchForm: this.state.researchForm, onResearchField: (k)=>this.onResearchField(k), submitResearchForm: this.submitResearchForm, researchSubmitted: this.state.researchSubmitted,
+      fieldSchema: FIELD_SCHEMA, schemaPreviewRows, onDownloadSchemaSample, onDownloadSchemaSampleHome: onDownloadSchemaSample,
+      detail, metricTabs, rangeTabs, isRankMetric, chartGeo, chartGrid, chartLocked, isFree,
+      previewData, showFieldSchema: this.state.showFieldSchema, toggleFieldSchema: this.toggleFieldSchema,
+      tierBgFree, tierBgPro, tierBgCustom, isFreeActive, canDownload1y, canDownload3y, noop: this.noop,
+      onDownload1y: ()=>this.downloadCsv(detailExt,'1y'), onDownload3y: ()=>this.downloadCsv(detailExt,'3y'), onDownloadSample: ()=>this.downloadCsv(detailExt,'sample'),
+      onChartMove: this.onChartMove, onChartLeave: this.onChartLeave,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
