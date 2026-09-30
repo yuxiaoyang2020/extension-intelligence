@@ -1,0 +1,60 @@
+{% extends "intelligence/base.html" %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+
+{% block content %}
+<main style="max-width:760px;margin:0 auto;padding:0 32px 80px;">
+  <section style="padding-top:48px;">
+    <div class="card-kicker" style="margin-bottom:10px;">方法论</div>
+    <h1 style="font-size:28px;margin-bottom:20px;">Methodology</h1>
+
+    <div style="font-size:14px;line-height:1.8;">
+      <p>这个页面如实说明我们展示的每一项指标是怎么算出来的——不是营销话术，是对应代码里
+      实际跑的计算逻辑。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">数据采集</h2>
+      <p>我们每天对 Chrome 网上应用店的公开页面做一次快照，记录每个插件当天的用户数、评分、
+      评论数、分类排名、全站排名等字段。所有历史趋势、增长率，都是基于这些每日快照按时间序列
+      计算出来的，不是抽样估算。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">增长率 / 增长量</h2>
+      <p>「N日增长量」= 今天的用户数 − N天前的用户数。「N日增长率」= 增长量 ÷ N天前的用户数。
+      如果某个插件在我们数据库里的历史还不够N天（比如插件是最近才第一次出现在我们的采集范围内），
+      对应的N日指标会显示为空，不会用0或者估算值填充——空值代表"数据不足以计算"，不是"没有变化"。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">增长加速度</h2>
+      <p>「7日增长加速度」= 最近7天的增长量 − 前7天的增长量。正数代表增长正在加快，负数代表
+      增长正在放缓——这是一个二阶变化量，不是简单的"增长率排名"。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">里程碑速度</h2>
+      <p>「首次达到N用户所需天数」，以插件第一次出现在我们数据采集范围内的那天为起点计算。
+      如果插件第一次被我们记录到时用户数已经超过某个门槛（比如插件上线很久之后我们才开始
+      追踪它），说明"首次达到"这个事件发生在我们的数据范围之前，这种情况下我们不会编造一个
+      日期，该插件在这个门槛上的里程碑数据会保持空白。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">SEO Index Pool（Extension Detail页收录策略）</h2>
+      <p>不是每一个插件的详情页都会被我们提交给搜索引擎收录。一个插件要进入首批收录池
+      （Tier 1），需要连续7天同时满足以下条件：</p>
+      <ul style="padding-left:20px;">
+        <li>当前用户数 ≥ 1,000</li>
+        <li>评论数 ≥ 10</li>
+        <li>最近一次更新在365天以内</li>
+        <li>页面内容通过质量检查：有效的功能描述、有效的分类、至少30天的历史数据、
+        至少能可靠算出一项7/30/90天增长指标</li>
+      </ul>
+      <p>已经进入收录池的插件如果指标出现普通波动跌破门槛，会先进入约30天的观察期
+      （继续保持收录状态），而不是立刻撤销收录——避免因为短期数据波动导致页面反复
+      上下架，这类频繁变动对页面本身的搜索表现是有害的。只有插件被平台标记为已下架/
+      未上架，或者数据出现明显异常时，才会立即从收录池移除。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">这个页面不回答的问题</h2>
+      <p>我们不对插件的安全性、是否值得安装、是否比同类插件更好做任何判断——这些问题需要
+      的信息（代码审计、权限分析、用户体验评测）超出了我们当前的数据采集范围，我们不会
+      基于不充分的数据给出误导性的结论。</p>
+
+      <p style="margin-top:24px;">完整字段清单见 <a href="{% url 'intelligence:data_dictionary' %}" class="ei-link">Data Dictionary</a>。</p>
+    </div>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% load static %}<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block meta_title %}Extension Intelligence{% endblock %}</title>
+<meta name="description" content="{% block meta_description %}{% endblock %}">
+{% if google_site_verification %}<meta name="google-site-verification" content="{{ google_site_verification }}">{% endif %}
+{% block robots %}{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">{% endblock %}
+<meta property="og:site_name" content="Extension Intelligence">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ meta_title|default:'Extension Intelligence' }}">
+<meta property="og:description" content="{{ meta_description }}">
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{ meta_title|default:'Extension Intelligence' }}">
+<meta name="twitter:description" content="{{ meta_description }}">
+<link rel="stylesheet" href="{% static 'intelligence/css/modernist.css' %}">
+<link rel="stylesheet" href="{% static 'intelligence/css/theme.css' %}">
+<style>
+  /* 2026-09-30新增：全站加载指示条——Rankings/Explorer这类查询30万行的
+     页面偶尔会有明显延迟，之前页面卡住时完全没有任何反馈，用户容易以为
+     网站坏了。纯CSS+无依赖，不影响任何现有功能。 */
+  #ei-loading-bar { position:fixed; top:0; left:0; height:3px; width:0%; background:var(--color-accent, #4f46e5); z-index:9999; transition:width 4s cubic-bezier(0.1,0.7,0.3,1), opacity 0.3s; opacity:0; }
+  #ei-loading-bar.ei-loading-active { width:80%; opacity:1; }
+</style>
+{% if posthog_api_key %}
+<script>
+  // PostHog——posthog_api_key留空（本地开发默认）时这整段不会输出，不会
+  // 把调试流量发进生产项目。page_type用register()注册成"超级属性"，之后
+  // 自动埋点(autocapture)的每一次pageview/click都会自动带上这个属性，
+  // 不需要给每种页面类型手写一次capture调用——这样才能在PostHog里按
+  // page_type把 SEO Landing → Research → Dataset → Pricing → Checkout →
+  // Purchase 这条路径串成漏斗。不额外埋没意义的自定义事件（第11条要求），
+  // 只在Pricing的升级按钮/注册成功这两个真正的转化关键点手动capture一次
+  // （见pricing.html/register.html）。
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.uploadLater(e,arguments)}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init bs ws me ce Fs capture Ds calculateEventProperties Gs register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('{{ posthog_api_key }}', {api_host: '{{ posthog_host }}', person_profiles: 'identified_only'});
+  posthog.register({page_type: '{{ page_type|default:"other" }}'});
+</script>
+{% endif %}
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<div id="ei-loading-bar"></div>
+<script>
+  // 点击站内链接/提交表单的瞬间就显示加载条，不等到页面真的卡住才反应——
+  // 新页面加载完成后这段JS和DOM本身会被整个替换掉，不需要手动"隐藏"它。
+  // 排除新标签页打开、锚点跳转、mailto/tel链接、按住修饰键点击这几种
+  // 不会离开当前页面的情况，避免误触发。
+  (function () {
+    function showBar() {
+      var bar = document.getElementById('ei-loading-bar');
+      if (bar) bar.className = 'ei-loading-active';
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href]');
+      if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+      if (a.target && a.target !== '' && a.target !== '_self') return;
+      showBar();
+    });
+    document.addEventListener('submit', function (e) {
+      if (!e.defaultPrevented) showBar();
+    });
+    window.addEventListener('pageshow', function () {
+      var bar = document.getElementById('ei-loading-bar');
+      if (bar) bar.className = '';
+    });
+  })();
+</script>
+<div style="background:var(--color-bg);min-height:100vh;">
+
+<nav class="nav" style="position:sticky;top:0;background:var(--color-bg);z-index:30;padding-left:32px;padding-right:32px;">
+  <a href="{% url 'intelligence:home' %}" style="display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto;">
+    <span style="width:28px;height:28px;background:var(--color-text);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:14px;flex:none;border-radius:var(--radius-sm);">E</span>
+    <span class="nav-brand" style="margin-right:0;color:var(--color-text);">Extension Intelligence</span>
+  </a>
+  <a href="{% url 'intelligence:home' %}" class="ei-link" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>发现</a>
+  <a href="{% url 'intelligence:dataset' %}" class="ei-link" {% if request.resolver_match.url_name == 'dataset' %}aria-current="page"{% endif %}>数据集</a>
+  <a href="{% url 'intelligence:rankings' %}" class="ei-link" {% if request.resolver_match.url_name == 'rankings' %}aria-current="page"{% endif %}>排行榜</a>
+  <a href="{% url 'intelligence:explorer' %}" class="ei-link" {% if request.resolver_match.url_name == 'explorer' %}aria-current="page"{% endif %}>市场探索</a>
+  <div style="display:flex;align-items:center;gap:20px;">
+    <a href="{% url 'intelligence:pricing' %}" class="ei-link" style="font-size:14px;" {% if request.resolver_match.url_name == 'pricing' %}aria-current="page"{% endif %}>定价</a>
+    {% if user.is_authenticated %}
+      {% if user.is_staff %}
+        <a href="{% url 'intelligence:staff_dashboard' %}" class="ei-link" style="font-size:14px;" {% if request.resolver_match.url_name == 'staff_dashboard' %}aria-current="page"{% endif %}>内部管理</a>
+      {% endif %}
+      <a href="{% url 'intelligence:account' %}" class="ei-link" style="font-size:14px;" {% if request.resolver_match.url_name == 'account' %}aria-current="page"{% endif %}>{{ user.email|default:user.username }}</a>
+      <form method="post" action="{% url 'intelligence:logout' %}" style="display:inline;margin:0;">
+        {% csrf_token %}
+        <button type="submit" style="background:none;border:none;padding:0;color:inherit;font-size:14px;cursor:pointer;font-family:inherit;">退出</button>
+      </form>
+    {% else %}
+      <a href="{% url 'intelligence:login' %}" style="text-decoration:none;color:inherit;font-size:14px;">登录</a>
+      <a href="{% url 'intelligence:register' %}" class="btn btn-primary">注册</a>
+    {% endif %}
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<footer style="border-top:1px solid var(--color-divider);margin-top:60px;padding:28px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;opacity:0.7;">
+  <span>&copy; {% now "Y" %} Extension Intelligence</span>
+  <div style="display:flex;gap:20px;">
+    <a href="{% url 'intelligence:privacy' %}" class="ei-link">隐私政策</a>
+    <a href="{% url 'intelligence:terms' %}" class="ei-link">服务条款</a>
+    <a href="mailto:contact@extension-center.com" class="ei-link">联系客服</a>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>

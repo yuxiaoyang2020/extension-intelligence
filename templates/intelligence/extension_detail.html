@@ -1,0 +1,213 @@
+{% extends "intelligence/base.html" %}
+{% load intelligence_extras %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ canonical_url }}">{% endblock %}
+{% block robots %}{% if not should_index %}<meta name="robots" content="noindex, follow">{% endif %}{% endblock %}
+{% block extra_head %}
+<script type="application/ld+json">{{ jsonld }}</script>
+<script type="application/ld+json">{{ breadcrumb_jsonld }}</script>
+{% endblock %}
+
+{% block content %}
+<main style="max-width:1320px;margin:0 auto;padding:0 32px 80px;">
+
+  <nav aria-label="breadcrumb" style="padding-top:20px;font-size:12px;opacity:0.6;margin-bottom:16px;">
+    {% for item in breadcrumb_items %}
+      {% if not forloop.first %} / {% endif %}
+      {% if item.url and not forloop.last %}<a href="{{ item.url }}" class="ei-link">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}
+    {% endfor %}
+  </nav>
+
+  {% if extension.is_unlisted %}
+  <div style="border:1px solid var(--color-divider);background:var(--color-card);padding:14px 18px;border-radius:var(--radius-lg);margin-bottom:20px;font-size:13px;">
+    此插件当前无法在 Chrome 网上应用店的公开列表中找到，可能已下架或未公开上架。以下数据为我们最后一次成功采集到的记录。
+  </div>
+  {% endif %}
+
+  <section style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:20px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span class="ei-avatar" style="width:56px;height:56px;font-size:22px;">{{ extension.name|first|upper }}</span>
+      <div>
+        <h1 style="font-size:28px;margin-bottom:4px;">{{ extension.name }}</h1>
+        <div style="font-size:13px;opacity:0.65;">
+          {{ extension.developer }} ·
+          {% if category_url_name %}<a href="{% url category_url_name %}" class="tag tag-neutral" style="text-decoration:none;">{{ extension.category }}</a>
+          {% else %}<span class="tag tag-neutral">{{ extension.category }}</span>{% endif %}
+        </div>
+      </div>
+    </div>
+    <a href="{{ extension.store_url }}" target="_blank" class="btn btn-secondary">在 Chrome Web Store 查看</a>
+  </section>
+
+  {% if extension.description %}
+  <section style="margin-bottom:28px;">
+    <p style="font-size:14px;line-height:1.7;opacity:0.85;max-width:820px;">{{ extension.description }}</p>
+  </section>
+  {% endif %}
+
+  <section style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:32px;">
+    <div style="background:var(--color-card);padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.55;margin-bottom:6px;">当前用户数</div>
+      <div style="font-size:20px;font-weight:800;font-family:var(--font-heading);">{{ metric.user_count|fmt_users }}</div>
+    </div>
+    <div style="background:var(--color-card);padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.55;margin-bottom:6px;">评分</div>
+      <div style="font-size:20px;font-weight:800;font-family:var(--font-heading);">{{ extension.rating_value|floatformat:1|default:"—" }}</div>
+    </div>
+    <div style="background:var(--color-card);padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.55;margin-bottom:6px;">评论数</div>
+      <div style="font-size:20px;font-weight:800;font-family:var(--font-heading);">{{ extension.rating_count|fmt_users }}</div>
+    </div>
+    <div style="background:var(--color-card);padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.55;margin-bottom:6px;">插件年龄(天)</div>
+      <div style="font-size:20px;font-weight:800;font-family:var(--font-heading);">{{ metric.age_days|default:"—" }}</div>
+    </div>
+    <div style="background:var(--color-card);padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.55;margin-bottom:6px;">商业模式</div>
+      <div style="font-size:20px;font-weight:800;font-family:var(--font-heading);">{{ extension.payment_type|default:"—" }}</div>
+    </div>
+    <div style="background:var(--color-card);padding:14px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.55;margin-bottom:6px;">版本</div>
+      <div style="font-size:20px;font-weight:800;font-family:var(--font-heading);">{{ extension.version|default:"—" }}</div>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:24px;margin-bottom:8px;">
+    <h2 style="font-size:20px;margin-bottom:16px;">用户增长</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;">
+      <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <div style="font-size:12px;opacity:0.6;margin-bottom:10px;">7日增长</div>
+        <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);{% if metric.user_count_change_7d < 0 %}color:var(--color-danger-700);{% endif %}">{{ metric.user_count_change_7d|fmt_delta }}</div>
+      </div>
+      <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <div style="font-size:12px;opacity:0.6;margin-bottom:10px;">30日增长</div>
+        <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);{% if metric.user_count_change_30d < 0 %}color:var(--color-danger-700);{% endif %}">{{ metric.user_count_change_30d|fmt_delta }}</div>
+      </div>
+      <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <div style="font-size:12px;opacity:0.6;margin-bottom:10px;">90日增长</div>
+        <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);{% if metric.user_count_change_90d < 0 %}color:var(--color-danger-700);{% endif %}">{{ metric.user_count_change_90d|fmt_delta }}</div>
+      </div>
+    </div>
+    {% if growth_summary %}
+    <p style="font-size:13px;opacity:0.75;line-height:1.6;">{{ growth_summary }}</p>
+    {% endif %}
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:24px;">
+    <div class="card-kicker" style="margin-bottom:4px;">Historical Analytics</div>
+    <h2 style="font-size:20px;margin-bottom:16px;">历史分析（用户数，共 {{ history_rows|length }} 个数据点）</h2>
+    {% if chart_path %}
+    <div style="border:1px solid var(--color-divider);padding:16px 16px 8px;background:var(--color-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <svg width="100%" height="260" viewBox="0 0 760 260" preserveAspectRatio="none">
+        <path d="{{ chart_path }}" fill="none" stroke="var(--color-text)" stroke-width="2"></path>
+      </svg>
+    </div>
+    {% else %}
+    <div style="border:1px solid var(--color-divider);padding:48px 16px;background:var(--color-card);text-align:center;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <p style="font-size:13px;opacity:0.65;">这个插件暂无历史曲线数据（需要先执行 python manage.py sync_extension {{ extension.extension_id }}）。</p>
+    </div>
+    {% endif %}
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:24px;">
+    <h2 style="font-size:20px;margin-bottom:16px;">首次达到的用户量里程碑</h2>
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;">
+      <table class="table" style="background:var(--color-card);">
+        <thead><tr><th>档位</th><th>首次达到日期</th><th class="ei-num">用时(天，近似)</th></tr></thead>
+        <tbody>
+        {% for m in milestone_rows %}
+          <tr>
+            <td>{{ m.milestone|fmt_users }}</td>
+            <td>{{ m.first_reached_date|default:"未达到" }}</td>
+            <td class="ei-num">{{ m.days_since_launch|default:"—" }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3" style="padding:16px;opacity:0.6;">暂无里程碑数据</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {% if faq %}
+  <section style="padding-top:24px;">
+    <h2 style="font-size:20px;margin-bottom:16px;">常见问题</h2>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      {% for question, answer in faq %}
+      <div style="border:1px solid var(--color-divider);background:var(--color-card);padding:16px 18px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <div style="font-weight:600;font-size:14px;margin-bottom:6px;">{{ question }}</div>
+        <div style="font-size:13px;opacity:0.8;line-height:1.6;">{{ answer }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if similar_extensions %}
+  <section style="padding-top:24px;">
+    <h2 style="font-size:20px;margin-bottom:16px;">同类插件</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      {% for sim in similar_extensions %}
+      <a href="{% url 'intelligence:extension_detail' extension_id=sim.extension_id slug=sim.slug %}"
+         style="display:flex;align-items:center;gap:10px;padding:14px;background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);text-decoration:none;color:inherit;">
+        <span class="ei-avatar">{{ sim.name|first|upper }}</span>
+        <div style="min-width:0;">
+          <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ sim.name }}</div>
+          <div style="font-size:11px;opacity:0.6;">{{ sim.metric.user_count|fmt_users }} 用户</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section style="padding-top:24px;padding-bottom:20px;">
+    <h2 style="font-size:20px;margin-bottom:16px;">原始历史数据点</h2>
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow-x:auto;">
+      <table class="table" style="min-width:640px;background:var(--color-card);">
+        <thead><tr><th>日期</th><th class="ei-num">用户数</th><th class="ei-num">评论数</th><th class="ei-num">评分</th><th class="ei-num">分类排名</th><th class="ei-num">总排名</th></tr></thead>
+        <tbody>
+        {% for row in history_rows %}
+          <tr>
+            <td style="font-size:13px;opacity:0.7;">{{ row.date }}</td>
+            <td class="ei-num">{{ row.user_count }}</td>
+            <td class="ei-num">{{ row.rating_count }}</td>
+            <td class="ei-num">{{ row.rating_value|floatformat:1 }}</td>
+            <td class="ei-num">{{ row.extension_rank }}</td>
+            <td class="ei-num">{{ row.overall_rank }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" style="padding:16px;opacity:0.6;">暂无历史数据点</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="padding-top:8px;padding-bottom:20px;display:flex;gap:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:260px;border:1px solid var(--color-divider);background:var(--color-card);padding:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div>
+        <div class="card-kicker" style="margin-bottom:6px;">Chrome Extension Dataset</div>
+        <div style="font-size:14px;opacity:0.75;">需要跨插件、可下载的完整历史数据集？访问完整历史与全部字段。</div>
+      </div>
+      <a href="{% url 'intelligence:dataset' %}" class="btn btn-primary">查看数据集 →</a>
+    </div>
+    <div style="flex:1;min-width:260px;border:1px solid var(--color-divider);background:var(--color-card);padding:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div>
+        <div class="card-kicker" style="margin-bottom:6px;">Rankings</div>
+        <div style="font-size:14px;opacity:0.75;">看看这个插件在增长排行榜上的位置，以及其它增长最快的插件。</div>
+      </div>
+      <a href="{% url 'intelligence:rankings' %}" class="btn btn-secondary">查看排行榜 →</a>
+    </div>
+  </section>
+
+</main>
+{% endblock %}

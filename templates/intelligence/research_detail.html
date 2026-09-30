@@ -1,0 +1,28 @@
+{% extends "intelligence/base.html" %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+
+{% block content %}
+<main style="max-width:720px;margin:0 auto;padding:0 32px 80px;">
+  <div style="padding-top:20px;font-size:12px;opacity:0.6;margin-bottom:16px;">
+    <a href="{% url 'intelligence:home' %}" class="ei-link">首页</a> /
+    <a href="{% url 'intelligence:research_index' %}" class="ei-link">Research</a> / {{ article.title }}
+  </div>
+
+  <article>
+    <div style="font-size:12px;opacity:0.55;margin-bottom:8px;">{{ article.published_date }}</div>
+    <h1 style="font-size:26px;margin-bottom:20px;line-height:1.35;">{{ article.title }}</h1>
+    <div style="font-size:14px;line-height:1.85;">
+      {% for para in body_html %}
+      <p style="margin-bottom:16px;">{{ para }}</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <div style="margin-top:32px;border:1px solid var(--color-divider);background:var(--color-card);padding:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+    <div style="font-size:14px;opacity:0.75;">想自己核对这些数字，或者做更深入的分析？</div>
+    <a href="{% url 'intelligence:dataset' %}" class="btn btn-primary">查看完整数据集 →</a>
+  </div>
+</main>
+{% endblock %}

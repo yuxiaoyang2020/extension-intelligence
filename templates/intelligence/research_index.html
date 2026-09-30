@@ -1,0 +1,28 @@
+{% extends "intelligence/base.html" %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+
+{% block content %}
+<main style="max-width:760px;margin:0 auto;padding:0 32px 80px;">
+  <section style="padding-top:48px;margin-bottom:24px;">
+    <div class="card-kicker" style="margin-bottom:10px;">Research & Insights</div>
+    <h1 style="font-size:28px;margin-bottom:8px;">数据研究</h1>
+    <p style="font-size:14px;opacity:0.7;">基于我们采集到的真实Chrome Extension市场数据做的分析，不是批量生成的通用内容——
+    数量不多，但每一篇的数字都可以在我们自己的数据集里复现。</p>
+  </section>
+
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    {% for article in articles %}
+    <a href="{% url 'intelligence:research_detail' slug=article.slug %}"
+       style="display:block;padding:20px;background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);text-decoration:none;color:inherit;">
+      <div style="font-size:12px;opacity:0.55;margin-bottom:6px;">{{ article.published_date }}</div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:8px;">{{ article.title }}</div>
+      <div style="font-size:13px;opacity:0.75;line-height:1.6;">{{ article.summary }}</div>
+    </a>
+    {% empty %}
+    <p style="opacity:0.6;">暂无内容。</p>
+    {% endfor %}
+  </div>
+</main>
+{% endblock %}

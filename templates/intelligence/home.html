@@ -1,0 +1,290 @@
+{% extends "intelligence/base.html" %}
+{% load intelligence_extras %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+{% block robots %}{% if query %}<meta name="robots" content="noindex, follow">{% endif %}{% endblock %}
+
+{% block content %}
+<main style="max-width:1320px;margin:0 auto;padding:0 32px 80px;">
+
+  <section style="padding-top:56px;padding-bottom:40px;max-width:680px;">
+    <div class="card-kicker" style="margin-bottom:10px;">市场情报平台</div>
+    <h1 style="margin-bottom:14px;">Chrome Extension 市场情报平台</h1>
+    <p style="font-size:16px;opacity:0.75;margin-bottom:28px;">发现正在增长的插件，分析历史趋势，获取持续扩展的 Chrome Web Store 数据。</p>
+    <form method="get" style="position:relative;">
+      <input class="input" style="height:52px;font-size:16px;padding-left:16px;" type="text" name="q" placeholder="搜索插件名称或 Extension ID" value="{{ query }}">
+    </form>
+    {% if query %}
+    <div style="margin-top:10px;background:var(--color-card);border:1px solid var(--color-divider);box-shadow:var(--shadow-md);border-radius:var(--radius-md);overflow:hidden;">
+      {% for ext in search_results %}
+        <a href="{% url 'intelligence:extension_detail' extension_id=ext.extension_id slug=ext.slug %}" class="ei-row" style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--color-divider);text-decoration:none;color:inherit;">
+          <span class="ei-avatar">{{ ext.name|first|upper }}</span>
+          <span style="flex:1;font-size:14px;">{{ ext.name }}</span>
+          <span style="font-size:12px;opacity:0.6;" class="ei-num">{{ ext.category }}</span>
+        </a>
+      {% empty %}
+        <div style="padding:14px;font-size:13px;opacity:0.65;">没有找到匹配的插件（当前数据库只同步了少量插件用于验证页面，搜索范围有限，不是全量数据）</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- 2026-09-29：这里的"1年内"/"70"是当前真实数据现状（parquet历史现在
+       实际只有约1年，字段数已经是最终确定的70），不是Custom套餐"3年以上"
+       那个目标值——首页这组数字是给所有访客（不分套餐）看的整体产品现状，
+       等历史数据真正回补到3年以上，这里要跟着更新，不能提前虚报。 -->
+  <section style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding-bottom:8px;">
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">300K+</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">收录插件</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">1年内</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">每日历史快照</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">70</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">数据字段</div>
+    </div>
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
+      <div style="font-size:24px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">每日</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">数据更新</div>
+    </div>
+  </section>
+
+  <section style="padding-top:8px;padding-bottom:8px;">
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);background:var(--color-card);padding:28px;">
+      <div class="card-kicker" style="margin-bottom:6px;">Chrome Extension Dataset</div>
+      <h2 style="font-size:24px;margin-bottom:6px;">支撑整个平台的历史数据资产</h2>
+      <p style="font-size:14px;opacity:0.7;margin-bottom:20px;max-width:640px;">一个独立的商业数据产品，覆盖 300K+ 插件、1年内的每日历史快照，支持 CSV 导出，提供示例数据集。</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;background:var(--color-surface);">300K+ 插件</div>
+        <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;background:var(--color-surface);">1年内每日快照</div>
+        <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;background:var(--color-surface);">70 字段 / 插件</div>
+        <div style="border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px 14px;font-size:13px;background:var(--color-surface);">CSV 导出 · 示例数据集</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="{% url 'intelligence:dataset' %}" class="btn btn-primary">浏览数据集 →</a>
+        <a href="{% url 'intelligence:dataset_sample_csv' %}" class="btn btn-secondary">下载示例 CSV</a>
+      </div>
+    </div>
+  </section>
+  <p style="font-size:12px;opacity:0.55;margin:-6px 0 8px;">每日更新，持续扩展的历史数据库 —— 不是一次性的静态数据集。</p>
+
+  <hr class="hr">
+
+  <section style="padding-top:32px;">
+    <div class="card-kicker" style="margin-bottom:6px;">实时排行 · 预览</div>
+    <h2 style="font-size:26px;">7 日增长排行预览</h2>
+    <p style="font-size:14px;opacity:0.7;margin-bottom:20px;">哪些插件在过去 7 天增长最快？完整榜单支持更多周期与机会信号筛选。</p>
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);background:var(--color-card);overflow:hidden;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:36px;">#</th>
+            <th>插件</th>
+            <th class="ei-num">当前用户数</th>
+            <th class="ei-num">7日增长</th>
+            <th class="ei-num">7日增长率</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ext in top_growth %}
+          <tr class="ei-row" onclick="location.href='{% url 'intelligence:extension_detail' extension_id=ext.extension_id slug=ext.slug %}'">
+            <td style="opacity:0.6;">{{ forloop.counter }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span class="ei-avatar">{{ ext.name|first|upper }}</span>
+                <span style="font-weight:600;">{{ ext.name }}</span>
+              </div>
+            </td>
+            <td class="ei-num">{{ ext.metric.user_count|fmt_users }}</td>
+            <td class="ei-num" style="{% if ext.metric.user_count_change_7d < 0 %}color:var(--color-danger-700);{% endif %}">{{ ext.metric.user_count_change_7d|fmt_delta }}</td>
+            <td class="ei-num" style="{% if ext.metric.user_growth_rate_7d < 0 %}color:var(--color-danger-700);{% endif %}">{% if ext.metric.user_growth_rate_7d != None %}{{ ext.metric.user_growth_rate_7d|pct }}%{% else %}—{% endif %}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" style="padding:16px;opacity:0.6;">还没有同步任何插件，先执行 python manage.py sync_top_growth</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:right;margin-top:12px;">
+      <a href="{% url 'intelligence:rankings' %}" class="ei-link" style="font-size:14px;font-weight:600;">查看完整排行榜 →</a>
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:32px;">
+    <div class="card-kicker" style="margin-bottom:6px;">增长信号</div>
+    <h2 style="font-size:26px;">值得关注的机会</h2>
+    <p style="font-size:14px;opacity:0.7;margin-bottom:20px;">不只看谁增长最多，还可以发现出现特殊增长信号的插件。</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
+
+      <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <h4 style="margin-bottom:2px;">新兴增长</h4>
+        <p style="font-size:12px;opacity:0.65;margin-bottom:12px;">上线时间较短，但已经快速获得用户。</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+          {% for ext in opportunity_emerging %}
+          <a href="{% url 'intelligence:extension_detail' extension_id=ext.extension_id slug=ext.slug %}" class="ei-row" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+            <span class="ei-avatar" style="width:20px;height:20px;font-size:10px;">{{ ext.name|first|upper }}</span>
+            <span style="flex:1;font-size:13px;">{{ ext.name }}</span>
+            <span class="ei-num" style="font-size:12px;font-weight:600;">30日 {{ ext.metric.user_count_change_30d|fmt_delta }}</span>
+          </a>
+          {% empty %}
+          <div style="font-size:12px;opacity:0.55;">暂无插件命中此信号（当前样本量小）</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <h4 style="margin-bottom:2px;">增长加速</h4>
+        <p style="font-size:12px;opacity:0.65;margin-bottom:12px;">最近的增长速度明显高于上一周期。</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+          {% for ext in opportunity_accelerating %}
+          <a href="{% url 'intelligence:extension_detail' extension_id=ext.extension_id slug=ext.slug %}" class="ei-row" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+            <span class="ei-avatar" style="width:20px;height:20px;font-size:10px;">{{ ext.name|first|upper }}</span>
+            <span style="flex:1;font-size:13px;">{{ ext.name }}</span>
+            <span class="ei-num" style="font-size:12px;font-weight:600;">加速度 {{ ext.metric.user_count_growth_acceleration_7d|fmt_delta }}</span>
+          </a>
+          {% empty %}
+          <div style="font-size:12px;opacity:0.55;">暂无插件命中此信号（当前样本量小）</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <h4 style="margin-bottom:2px;">快速里程碑</h4>
+        <p style="font-size:12px;opacity:0.65;margin-bottom:12px;">以异常快的速度达到关键用户规模。</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+          {% for item in opportunity_fast_milestone %}
+          <a href="{% url 'intelligence:extension_detail' extension_id=item.extension.extension_id slug=item.extension.slug %}" class="ei-row" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+            <span class="ei-avatar" style="width:20px;height:20px;font-size:10px;">{{ item.extension.name|first|upper }}</span>
+            <span style="flex:1;font-size:13px;">{{ item.extension.name }}</span>
+            <span class="ei-num" style="font-size:12px;font-weight:600;">{{ item.milestone.days_since_launch }}天达到{{ item.milestone.milestone|fmt_users }}</span>
+          </a>
+          {% empty %}
+          <div style="font-size:12px;opacity:0.55;">暂无数据（这个信号需要插件有完整历史曲线，目前只有少数几个插件同步了这份数据）</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="background:var(--color-card);padding:18px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+        <h4 style="margin-bottom:2px;">低关注高增长</h4>
+        <p style="font-size:12px;opacity:0.65;margin-bottom:12px;">当前规模仍有限，但增长表现已经明显突出。</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+          {% for ext in opportunity_under_radar %}
+          <a href="{% url 'intelligence:extension_detail' extension_id=ext.extension_id slug=ext.slug %}" class="ei-row" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+            <span class="ei-avatar" style="width:20px;height:20px;font-size:10px;">{{ ext.name|first|upper }}</span>
+            <span style="flex:1;font-size:13px;">{{ ext.name }}</span>
+            <span class="ei-num" style="font-size:12px;font-weight:600;">{{ ext.metric.user_count|fmt_users }} 用户 · 30日{{ ext.metric.user_growth_rate_30d|pct }}%</span>
+          </a>
+          {% empty %}
+          <div style="font-size:12px;opacity:0.55;">暂无插件命中此信号（当前样本以"绝对增长最高"为主，规模普遍偏大）</div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="hr">
+
+  <section style="padding-top:32px;">
+    <h3 style="font-size:20px;margin-bottom:16px;">最近突破</h3>
+    <div style="display:flex;flex-direction:column;">
+      {% for item in recent_milestones %}
+      <a href="{% url 'intelligence:extension_detail' extension_id=item.extension.extension_id slug=item.extension.slug %}" class="ei-row" style="display:flex;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid var(--color-divider);text-decoration:none;color:inherit;">
+        <span class="ei-avatar" style="width:22px;height:22px;font-size:11px;">{{ item.extension.name|first|upper }}</span>
+        <span style="flex:1;font-size:14px;font-weight:600;">{{ item.extension.name }}</span>
+        <span style="font-size:13px;opacity:0.65;width:100px;">{{ item.milestone.first_reached_date }}</span>
+        <span style="font-size:13px;font-weight:600;width:160px;text-align:right;">{{ item.milestone.days_since_launch }}天达到{{ item.milestone.milestone|fmt_users }}</span>
+      </a>
+      {% empty %}
+      <p style="font-size:13px;opacity:0.6;">暂无里程碑数据（需要插件同步完整历史曲线：python manage.py sync_extension &lt;id&gt;）</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if history_teaser %}
+  <hr class="hr">
+
+  <section style="padding-top:32px;padding-bottom:20px;display:grid;grid-template-columns:1fr 1.2fr;gap:40px;align-items:center;">
+    <div>
+      <div class="card-kicker" style="margin-bottom:6px;">插件历史分析</div>
+      <h2 style="font-size:26px;">不只是看到今天</h2>
+      <p style="font-size:14px;opacity:0.75;margin-bottom:20px;line-height:1.7;">Chrome Web Store 只能看到插件现在的用户规模。我们记录每日快照，可以看到它是如何一步步增长到今天的。</p>
+      <a href="{% url 'intelligence:dataset' %}" class="btn btn-secondary">浏览完整数据集 →</a>
+    </div>
+    <div style="border:1px solid var(--color-divider);padding:20px;background:var(--color-card);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div style="font-size:10px;letter-spacing:0.06em;text-transform:uppercase;opacity:0.5;margin-bottom:8px;">示例数据 · 非真实插件</div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;opacity:0.6;margin-bottom:8px;">
+        <span>{{ history_teaser.first_point.date }}</span>
+        <span>今天 · {{ history_teaser.last_point.date }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;height:100px;">
+        <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);">{{ history_teaser.first_point.user_count|fmt_users }}</div>
+        <div style="flex:1;height:2px;background:var(--color-divider);margin:0 16px;position:relative;top:-8px;"></div>
+        <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">{{ history_teaser.last_point.user_count|fmt_users }}</div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if case_study %}
+  <hr class="hr">
+
+  <section style="padding-top:32px;padding-bottom:20px;">
+    <div class="card-kicker" style="margin-bottom:6px;">案例研究</div>
+    <h2 style="font-size:24px;margin-bottom:8px;">一个插件如何从上线增长到今天的规模？</h2>
+    <p style="font-size:13px;opacity:0.65;margin-bottom:4px;">原始数据是数字，情报是判断依据 —— 完整历史、里程碑共同构成研究结论。</p>
+    <p style="font-size:11px;opacity:0.5;margin-bottom:20px;text-transform:uppercase;letter-spacing:0.06em;">示例数据 · 用于展示报告呈现效果，非真实插件</p>
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:24px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);background:var(--color-card);padding:24px;">
+      <div>
+        <div style="font-size:12px;opacity:0.6;margin-bottom:8px;">{{ case_study.category }} · 用户增长历史</div>
+        {% if case_study.chart_path %}
+        <svg width="100%" height="150" viewBox="0 0 660 150" preserveAspectRatio="none">
+          <path d="{{ case_study.chart_path }}" fill="none" stroke="var(--color-accent)" stroke-width="2.5"></path>
+        </svg>
+        {% endif %}
+      </div>
+      <div>
+        <div style="font-size:12px;opacity:0.6;margin-bottom:8px;">里程碑</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+          {% for m in case_study.milestones %}
+          <div style="display:flex;justify-content:space-between;font-size:13px;border-bottom:1px solid var(--color-divider);padding-bottom:6px;">
+            <span>{{ m.milestone|fmt_users }} 用户</span>
+            <span style="opacity:0.6;">用时 {{ m.days_since_launch }} 天</span>
+          </div>
+          {% empty %}
+          <div style="font-size:13px;opacity:0.55;">暂无里程碑记录</div>
+          {% endfor %}
+        </div>
+        <a href="{% url 'intelligence:pricing' %}" class="btn btn-secondary">解锁完整报告 →</a>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if testimonials %}
+  <hr class="hr">
+  <section style="padding-top:32px;padding-bottom:20px;">
+    <div class="card-kicker" style="margin-bottom:6px;">用户评价</div>
+    <h2 style="font-size:24px;margin-bottom:20px;">正在使用 Extension Intelligence 的团队怎么说</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      {% for t in testimonials %}
+      <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:20px;">
+        <p style="font-size:14px;line-height:1.6;margin-bottom:14px;">&ldquo;{{ t.quote }}&rdquo;</p>
+        <div style="font-size:12px;opacity:0.65;">{{ t.author_name }}{% if t.author_title %} · {{ t.author_title }}{% endif %}{% if t.company %} · {{ t.company }}{% endif %}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+  <!-- 上面这个Testimonials区块在没有真实客户评价时（testimonials_content.py
+       里的列表是空的）完全不渲染——明确要求生产环境不展示虚假用户评价，
+       等真的收集到愿意公开署名的客户评价再往那个文件里加，不用改这里。 -->
+
+</main>
+{% endblock %}

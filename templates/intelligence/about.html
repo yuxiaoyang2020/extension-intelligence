@@ -1,0 +1,37 @@
+{% extends "intelligence/base.html" %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+
+{% block content %}
+<main style="max-width:760px;margin:0 auto;padding:0 32px 80px;">
+  <section style="padding-top:48px;">
+    <div class="card-kicker" style="margin-bottom:10px;">关于我们</div>
+    <h1 style="font-size:28px;margin-bottom:20px;">About Extension Intelligence</h1>
+
+    <div style="font-size:14px;line-height:1.8;">
+      <p>Extension Intelligence（ExtensionCenter Intelligence）是一个Chrome Extension市场情报平台，
+      我们每天跟踪 Chrome 网上应用店里公开可见的插件数据——用户数、评分、评论数、排名、更新频率——
+      把它们整理成可搜索、可对比、可下载的历史数据集。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">我们做什么</h2>
+      <ul style="padding-left:20px;">
+        <li><strong>市场情报网站</strong>：搜索/浏览插件、查看增长排行榜、按条件筛选市场机会</li>
+        <li><strong>Chrome Extension Dataset</strong>：每日更新的完整历史数据集，供研究人员、
+        投资人、竞品分析团队下载使用</li>
+        <li><strong>定制研究</strong>：面向 Custom Intelligence 套餐用户的定制化市场研究需求</li>
+      </ul>
+
+      <h2 style="font-size:18px;margin-top:28px;">数据从哪里来</h2>
+      <p>我们的数据来自对 Chrome 网上应用店公开页面的定期采集，不涉及任何终端用户的个人信息——
+      具体的字段来源、计算方法，详见 <a href="{% url 'intelligence:methodology' %}" class="ei-link">方法论</a>
+      和 <a href="{% url 'intelligence:data_dictionary' %}" class="ei-link">Data Dictionary</a> 两个页面。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">联系我们</h2>
+      <p>任何问题、合作咨询、数据准确性反馈，欢迎发邮件到
+      <a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a>，
+      或访问 <a href="{% url 'intelligence:contact' %}" class="ei-link">联系我们</a> 页面。</p>
+    </div>
+  </section>
+</main>
+{% endblock %}

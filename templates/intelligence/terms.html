@@ -1,0 +1,71 @@
+{% extends "intelligence/base.html" %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, follow">{% endblock %}
+
+{% block content %}
+<main style="max-width:760px;margin:0 auto;padding:0 32px 80px;">
+  <section style="padding-top:48px;">
+    <div class="card-kicker" style="margin-bottom:10px;">法律信息</div>
+    <h1 style="font-size:28px;margin-bottom:8px;">服务条款</h1>
+    <p style="font-size:13px;opacity:0.6;margin-bottom:32px;">最后更新：2026年9月30日</p>
+
+    <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:32px;font-size:13px;">
+      <strong>⚠️ 上线前必须确认：</strong>标记【待填写】的地方需要你提供真实信息才能替换（法律实体全称、注册地址、适用法律管辖地）——这几项我不能替你决定或编造，你已确认暂不提供，先保留占位符。标记【默认条款】的地方是我代为写的草稿，建议找律师审核后再正式使用。
+    </div>
+
+    <div style="font-size:14px;line-height:1.8;">
+      <h2 style="font-size:18px;margin-top:28px;">1. 接受条款</h2>
+      <p>访问或使用 Extension Intelligence（以下简称"本服务"）即表示你同意本服务条款。如果你不同意，请不要使用本服务。本服务由【待填写：法律实体全称】运营。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">2. 服务说明</h2>
+      <p>本服务提供Chrome Extension市场情报数据，包括插件排行榜、增长趋势分析、市场探索工具，以及可下载的历史数据集（Customer Dataset）。我们提供Free/Professional/Custom Intelligence三档方案，各方案的功能和数据访问范围以Pricing页面当前展示的内容为准。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">3. 账户</h2>
+      <p>你需要注册账户才能使用部分功能。你需要对账户下的所有活动负责，并对账户密码保密。如发现账户被未授权使用，请立即联系我们。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">4. 订阅与付款</h2>
+      <ul style="padding-left:20px;">
+        <li>付费方案按月自动续费，通过 Stripe 处理付款，费用以Pricing页面标注的价格为准</li>
+        <li>订阅会在每个计费周期自动续费，除非你在当前周期结束前取消</li>
+        <li><strong>取消订阅</strong>：目前需要通过邮件联系客服（<a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a>）办理，我们不提供自助取消入口——这是我们刻意的产品设计，为了在取消前有机会了解你的使用情况、提供帮助</li>
+        <li>取消后，你的方案会在当前计费周期结束时降级为Free，计费周期内已生效的访问权限不受影响</li>
+        <li><strong>退款政策</strong>：仅当问题由我们的数据质量导致（比如数据明显错误、长期未更新、承诺的字段缺失）时，我们才受理退款申请，具体由客服个案判断。非数据质量原因（比如不再需要、用得不顺手、忘记取消）不支持退款——如需停止付费，请通过取消订阅处理，服务会持续到当前计费周期结束。</li>
+        <li><strong>退款对账户权限的影响</strong>：全额退款会立即取消你当次付费获得的访问权限，不会等到当前计费周期结束（这跟主动取消订阅不同——取消订阅是服务持续到周期结束才降级，全额退款代表这笔费用已经不构成我们的收入，没有理由让权限继续保留）。部分退款不会自动改变你的账户权限，具体如何处理由客服个案判断。</li>
+        <li>扣款失败：Stripe会按其重试计划自动重新尝试扣款，重试期间你的账户不会立即降级；重试全部失败后账户会自动降级为Free</li>
+      </ul>
+
+      <h2 style="font-size:18px;margin-top:28px;">5. 数据使用限制【默认条款，建议法律审核】</h2>
+      <p>我们授予你在订阅有效期内查看、下载和在内部业务范围内使用Customer Dataset的非独占许可。除非另有书面约定，你不得：</p>
+      <ul style="padding-left:20px;">
+        <li>将数据集整体或实质性部分转售、再许可、出租给第三方</li>
+        <li>将数据集用于构建与本服务直接竞争的产品</li>
+        <li>移除数据文件中的任何版权/来源标识</li>
+      </ul>
+      <p>你可以在自己的分析报告、产品决策、内部研究中自由使用数据得出的结论。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">6. 数据准确性</h2>
+      <p>我们的数据来自对Chrome网上应用店公开信息的定期采集和处理，力求准确，但不对数据的完整性、实时性或适用于特定用途做任何保证。你应对基于本服务数据做出的商业决策自行承担责任。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">7. 知识产权</h2>
+      <p>本服务的网站设计、代码、品牌标识归我们所有。数据集本身来自公开信息采集整理，我们对采集、清洗、计算得出的衍生指标（增长率、机会信号等）拥有权利，但不对底层的公开事实数据本身主张排他性所有权。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">8. 服务的终止</h2>
+      <p>如果你违反本条款（例如转售数据集、滥用账户），我们保留暂停或终止你账户的权利，并可能不予退款。你可以随时通过联系客服停止使用本服务。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">9. 免责声明与责任限制【默认条款，建议法律审核】</h2>
+      <p>本服务按"现状"提供，不附带任何明示或暗示的担保。在法律允许的最大范围内，我们不对因使用或无法使用本服务而产生的任何间接、附带、特殊或后果性损害承担责任。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">10. 适用法律【待填写】</h2>
+      <p>本条款受【待填写：适用法律的司法管辖地，例如"中华人民共和国法律"或某个州/国家的法律】管辖，不考虑法律冲突原则。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">11. 条款变更</h2>
+      <p>我们可能不时更新本条款，重大变更会通过邮件通知已注册用户，更新后的条款自本页面标注的"最后更新"日期起生效。继续使用本服务即表示你接受修订后的条款。</p>
+
+      <h2 style="font-size:18px;margin-top:28px;">12. 联系我们</h2>
+      <p>如对本服务条款有任何疑问，请发邮件至 <a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a>。</p>
+    </div>
+  </section>
+</main>
+{% endblock %}

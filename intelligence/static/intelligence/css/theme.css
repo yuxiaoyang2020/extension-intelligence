@@ -1,0 +1,147 @@
+/*
+  Extension Intelligence 的主题覆盖层。
+  base modernist.css 是原始设计系统（红色主色、直角），这里覆盖成 Claude Design
+  稿子（Extension Intelligence.dc.html）里最终确认的靛蓝圆角"高端 SaaS"主题，
+  数值直接照抄自设计稿的 <style> 覆盖块，不是自己估的。
+*/
+:root {
+  --color-bg: #f6f7fb;
+  --color-surface: #eef1f7;
+  --color-card: #ffffff;
+  --color-text: #1a1f36;
+  --color-divider: color-mix(in srgb, #1a1f36 10%, transparent);
+  --color-accent: oklch(58% 0.19 264);
+  --color-accent-100: oklch(96% 0.02 264);
+  --color-accent-200: oklch(92% 0.045 264);
+  --color-accent-300: oklch(86% 0.07 264);
+  --color-accent-400: oklch(76% 0.12 264);
+  --color-accent-500: oklch(65% 0.17 264);
+  --color-accent-600: oklch(50% 0.19 264);
+  --color-accent-700: oklch(42% 0.17 264);
+  --color-accent-800: oklch(34% 0.14 264);
+  --color-accent-900: oklch(24% 0.09 264);
+  --color-accent-2-100: oklch(96% 0.02 264);
+  --color-accent-2-200: oklch(92% 0.045 264);
+  --color-accent-2-300: oklch(86% 0.07 264);
+  --color-accent-2-400: oklch(76% 0.12 264);
+  --color-accent-2-500: oklch(65% 0.17 264);
+  --color-accent-2-600: oklch(50% 0.19 264);
+  --color-accent-2-700: oklch(42% 0.17 264);
+  --color-accent-2-800: oklch(34% 0.14 264);
+  --color-accent-2-900: oklch(24% 0.09 264);
+  --color-danger: oklch(55% 0.19 25);
+  --color-danger-700: oklch(42% 0.17 25);
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+
+body { background: var(--color-bg); }
+
+/* 设计稿里散落定义的几个小工具类，原样搬过来 */
+.ei-link { color: var(--color-text); text-decoration: none; }
+.ei-link:hover { color: var(--color-accent); }
+.ei-num { font-variant-numeric: tabular-nums; text-align: right; }
+.ei-row { cursor: pointer; }
+.ei-row:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+.ei-th { cursor: pointer; user-select: none; }
+.ei-avatar {
+  width: 26px; height: 26px; flex: none;
+  background: var(--color-neutral-200); color: var(--color-neutral-800);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; border-radius: var(--radius-sm); font-size: 12px;
+}
+.ei-seg { margin-bottom: 0; }
+
+/* 自定义悬浮提示气泡——比原生 title 属性更可靠（不依赖浏览器的悬浮延迟），
+   鼠标一放上去就出现。定价页"?"图标用的就是这个。 */
+.ei-tip { position: relative; display: inline-flex; }
+.ei-tip .ei-tip-bubble {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  width: 240px; background: var(--color-text); color: var(--color-bg);
+  font-size: 11px; font-weight: 400; line-height: 1.6; padding: 10px 12px;
+  border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.12s ease; z-index: 40; text-align: left;
+}
+.ei-tip .ei-tip-bubble::after {
+  content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: var(--color-text);
+}
+.ei-tip:hover .ei-tip-bubble,
+.ei-tip:focus-within .ei-tip-bubble { opacity: 1; visibility: visible; }
+.ei-link.active,
+.nav a[aria-current="page"] { color: var(--color-accent); font-weight: 600; }
+
+/* Django 表单渲染出来的 <p><label>...<input>，套上设计系统的 field/input 观感 */
+.ei-form p { margin: 0 0 14px; }
+.ei-form label { display: block; font-size: 12px; margin-bottom: 5px; color: color-mix(in srgb, var(--color-text) 70%, transparent); }
+.ei-form input[type="text"],
+.ei-form input[type="email"],
+.ei-form input[type="password"],
+.ei-form input[type="number"],
+.ei-form input[type="file"],
+.ei-form textarea,
+.ei-form select {
+  width: 100%; max-width: 420px; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); background: var(--color-surface);
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.ei-form textarea { min-height: 90px; resize: vertical; }
+.ei-form ul.errorlist { color: var(--color-danger-700); font-size: 12px; padding-left: 0; list-style: none; margin: 4px 0 0; }
+
+/* 宽表格（Rankings/Explorer这种列多、行多的数据表格）的通用滚动容器——
+   跟下面@media里那条"窄屏才滚动"的兜底规则不是一回事：这个不分屏幕宽度，
+   只要表格内容比容器宽就横向滚动，不会把整个页面撑宽；表头sticky，往下
+   滚动时列名还留在顶部；滚动条强制可见（很多系统默认滚动条细到几乎看不见，
+   用户容易以为"就这么多列，没有更多了"）。
+   用法：<div class="ei-table-wrap"><table class="table">...</table></div>
+   需要固定某一列（比如"插件"名称列）时，给对应的 th/td 都加 ei-col-sticky。 */
+.ei-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background: var(--color-card);
+}
+.ei-table-wrap table.table { margin: 0; }
+.ei-table-wrap thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-card);
+}
+.ei-table-wrap .ei-col-sticky {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--color-card);
+}
+.ei-table-wrap thead th.ei-col-sticky { z-index: 3; }
+.ei-table-wrap tbody tr:hover .ei-col-sticky { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+.ei-table-wrap::-webkit-scrollbar { height: 10px; }
+.ei-table-wrap::-webkit-scrollbar-track { background: var(--color-surface); }
+.ei-table-wrap::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 999px; }
+.ei-table-wrap::-webkit-scrollbar-thumb:hover { background: var(--color-neutral-400); }
+.ei-table-wrap { scrollbar-width: thin; scrollbar-color: var(--color-neutral-300) var(--color-surface); }
+
+/* 简单响应式：设计稿按桌面宽度设计（Google 移动优先索引会看这个），
+   这里给窄屏一个不至于破版的兜底，不是逐像素打磨的完整移动端设计。 */
+@media (max-width: 900px) {
+  main { padding-left: 20px !important; padding-right: 20px !important; }
+  section[style*="grid-template-columns:repeat(4"],
+  section[style*="grid-template-columns:repeat(3"],
+  section[style*="grid-template-columns:repeat(6"] { grid-template-columns: repeat(2, 1fr) !important; }
+  section[style*="grid-template-columns:1fr 1fr"],
+  section[style*="grid-template-columns:1fr 1.2fr"],
+  section[style*="grid-template-columns:1.2fr 1fr"] { grid-template-columns: 1fr !important; }
+  .nav { flex-wrap: wrap; gap: 10px var(--space-4); padding-left: 20px; padding-right: 20px; }
+  /* 其它没有用 .ei-table-wrap 的table（比如Pricing对比表），窄屏下至少不破版 */
+  div:has(> table.table):not(.ei-table-wrap) { overflow-x: auto; }
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 28px !important; }
+  h2 { font-size: 22px !important; }
+  section[style*="grid-template-columns:repeat(2"] { grid-template-columns: 1fr !important; }
+}

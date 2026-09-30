@@ -1,0 +1,139 @@
+{% extends "intelligence/base.html" %}
+{% load intelligence_extras %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+{% block robots %}{% if extra_qs %}<meta name="robots" content="noindex, follow">{% endif %}{% endblock %}
+{% block canonical %}
+<!-- 筛选/排序结果不单独收录，canonical统一指回不带参数的探索页 -->
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'intelligence:explorer' %}">
+{% endblock %}
+
+{% block content %}
+<main style="max-width:1320px;margin:0 auto;padding:0 32px 80px;">
+  <section style="padding-top:40px;">
+    <div class="card-kicker" style="margin-bottom:8px;">市场探索</div>
+    <h1 style="font-size:30px;">探索 Chrome Extension 市场</h1>
+    <p style="font-size:14px;opacity:0.7;margin-bottom:24px;">从已同步的插件中按自定义条件筛选符合要求的研究对象，共 {{ total_count }} 个插件符合当前条件。</p>
+
+    <!-- 2026-09-29 Explorer扩展（Stage 5）：数值类筛选全部改成预设区间
+         下拉（EXPLORER_NUMERIC_FILTERS驱动，不是自由Min/Max输入），
+         新增Featured/Trusted Publisher/By Google勾选筛选 + 机会标签筛选。
+         分类/商业模式两个保持原来动态取值下拉的做法不变。 -->
+    <form method="get" style="border:1px solid var(--color-divider);padding:18px;margin-bottom:12px;background:var(--color-surface);border-radius:var(--radius-lg);">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:14px;">
+        <div class="field">
+          <label>分类</label>
+          <select class="input" name="category">
+            <option value="">全部分类</option>
+            {% for c in all_categories %}<option value="{{ c }}" {% if c == filters.category %}selected{% endif %}>{{ c }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label>商业模式</label>
+          <select class="input" name="payment_type">
+            <option value="">全部</option>
+            {% for p in all_payment_types %}<option value="{{ p }}" {% if p == filters.payment_type %}selected{% endif %}>{{ p }}</option>{% endfor %}
+          </select>
+        </div>
+        {% for f in numeric_filter_defs %}
+        <div class="field">
+          <label>{{ f.label }}</label>
+          <select class="input" name="{{ f.param }}">
+            <option value="">全部</option>
+            {% for val, label in f.options %}
+            <option value="{{ val }}" {% if val == f.value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {% endfor %}
+        {% for f in bool_filter_defs %}
+        <div class="field">
+          <label>{{ f.label }}</label>
+          <select class="input" name="{{ f.param }}">
+            <option value="">全部</option>
+            <option value="yes" {% if f.value == "yes" %}selected{% endif %}>是</option>
+            <option value="no" {% if f.value == "no" %}selected{% endif %}>否</option>
+          </select>
+        </div>
+        {% endfor %}
+        <div class="field">
+          <label>机会标签</label>
+          <select class="input" name="opportunity">
+            <option value="">全部</option>
+            {% for val, label in opportunity_options %}
+            <option value="{{ val }}" {% if val == filters.opportunity %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;opacity:0.7;">找到 <strong style="opacity:1;">{{ total_count }}</strong> 个插件</span>
+        <div style="display:flex;gap:10px;">
+          <button type="submit" class="btn btn-primary">应用筛选</button>
+          <a href="{% url 'intelligence:explorer' %}" class="btn btn-secondary">清除全部</a>
+        </div>
+      </div>
+    </form>
+
+    <div class="ei-table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="ei-col-sticky">插件</th>
+          <th>分类</th>
+          <th class="ei-num ei-th"><a href="{{ sort_urls.users }}" class="ei-link">用户数{% if current_sort == "users" %} {% if current_dir == "desc" %}↓{% else %}↑{% endif %}{% endif %}</a></th>
+          <th class="ei-num ei-th"><a href="{{ sort_urls.7d_growth }}" class="ei-link">7日增长{% if current_sort == "7d_growth" %} {% if current_dir == "desc" %}↓{% else %}↑{% endif %}{% endif %}</a></th>
+          <th class="ei-num ei-th"><a href="{{ sort_urls.30d_growth }}" class="ei-link">30日增长{% if current_sort == "30d_growth" %} {% if current_dir == "desc" %}↓{% else %}↑{% endif %}{% endif %}</a></th>
+          <th class="ei-num ei-th"><a href="{{ sort_urls.rating }}" class="ei-link">评分{% if current_sort == "rating" %} {% if current_dir == "desc" %}↓{% else %}↑{% endif %}{% endif %}</a></th>
+          <th class="ei-num ei-th"><a href="{{ sort_urls.age }}" class="ei-link">年龄(天){% if current_sort == "age" %} {% if current_dir == "desc" %}↓{% else %}↑{% endif %}{% endif %}</a></th>
+          <th>商业模式</th>
+          <th>最后更新</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for ext in page_obj %}
+        <tr class="ei-row" onclick="location.href='{% url 'intelligence:extension_detail' extension_id=ext.extension_id slug=ext.slug %}'">
+          <td class="ei-col-sticky">
+            <div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
+              <span class="ei-avatar">{{ ext.name|first|upper }}</span>
+              <span style="font-weight:600;">{{ ext.name }}</span>
+              {% if ext.is_featured %}<span class="tag tag-accent" style="font-size:9px;">Featured</span>{% endif %}
+              {% if ext.is_trusted_publisher %}<span class="tag tag-neutral" style="font-size:9px;">Trusted</span>{% endif %}
+              {% if ext.by_google %}<span class="tag tag-neutral" style="font-size:9px;">By Google</span>{% endif %}
+            </div>
+          </td>
+          <td style="font-size:13px;opacity:0.7;">{{ ext.category }}</td>
+          <td class="ei-num">{{ ext.metric.user_count|fmt_users }}</td>
+          <td class="ei-num" style="{% if ext.metric.user_count_change_7d < 0 %}color:var(--color-danger-700);{% endif %}">{{ ext.metric.user_count_change_7d|fmt_delta }}</td>
+          <td class="ei-num" style="{% if ext.metric.user_count_change_30d < 0 %}color:var(--color-danger-700);{% endif %}">{{ ext.metric.user_count_change_30d|fmt_delta }}</td>
+          <td class="ei-num">{{ ext.rating_value|floatformat:1|default:"—" }}</td>
+          <td class="ei-num">{{ ext.metric.age_days|default:"—" }}</td>
+          <td><span class="tag tag-neutral">{{ ext.payment_type|default:"—" }}</span></td>
+          <td style="font-size:12px;opacity:0.65;">{{ ext.last_update|default:"—" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="9" style="padding:16px;opacity:0.6;">没有符合条件的插件，试试放宽筛选条件</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+
+    {% if locked %}
+    <div style="border:1px solid var(--color-divider);background:var(--color-card);padding:24px;text-align:center;margin-top:16px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
+      <div class="card-kicker" style="margin-bottom:6px;">专业版功能</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:10px;">免费版最多显示{{ total_count|default:0 }}个结果中的部分，解锁完整筛选结果</div>
+      <a href="{% url 'intelligence:pricing' %}" class="btn btn-primary">查看专业版</a>
+    </div>
+    {% endif %}
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+      {% if page_obj.has_previous %}<a href="?{{ extra_qs }}&page={{ page_obj.previous_page_number }}" class="btn btn-secondary">上一页</a>{% else %}<button class="btn btn-secondary" disabled>上一页</button>{% endif %}
+      <button class="btn btn-primary">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</button>
+      {% if page_obj.has_next %}<a href="?{{ extra_qs }}&page={{ page_obj.next_page_number }}" class="btn btn-secondary">下一页</a>{% else %}<button class="btn btn-secondary" disabled>下一页</button>{% endif %}
+    </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

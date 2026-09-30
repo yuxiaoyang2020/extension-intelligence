@@ -1,0 +1,74 @@
+{% extends "intelligence/base.html" %}
+
+{% block meta_title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+
+{% block content %}
+<main style="max-width:1180px;margin:0 auto;padding:0 32px 80px;">
+  <section style="padding-top:48px;margin-bottom:8px;">
+    <div class="card-kicker" style="margin-bottom:8px;">内部管理</div>
+    <h1 style="font-size:28px;">内部管理</h1>
+    <p style="font-size:13px;opacity:0.6;margin-bottom:24px;">只有管理员账号能看到这个页面。</p>
+  </section>
+
+  {% if messages %}
+    {% for message in messages %}
+    <div style="background:var(--color-accent-100);color:var(--color-accent-800);border-radius:var(--radius-md);padding:12px 16px;font-size:13px;margin-bottom:16px;">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <section style="margin-bottom:32px;">
+    <h3 style="font-size:18px;margin-bottom:12px;">用户与方案</h3>
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;">
+      <table class="table" style="background:var(--color-card);">
+        <thead><tr><th>邮箱</th><th>当前方案</th><th>操作</th></tr></thead>
+        <tbody>
+        {% for profile in profiles %}
+          <tr>
+            <td>{{ profile.user.email|default:profile.user.username }}</td>
+            <td><span class="tag tag-neutral">{{ profile.get_plan_display }}</span></td>
+            <td>
+              <form method="post" action="{% url 'intelligence:staff_update_plan' user_id=profile.user.id %}" style="display:flex;gap:8px;align-items:center;">
+                {% csrf_token %}
+                <select name="plan" class="input" style="width:auto;">
+                  {% for value, label in plan_choices %}
+                    <option value="{{ value }}" {% if value == profile.plan %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-secondary">更新</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3" style="padding:16px;opacity:0.6;">还没有注册用户</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="padding-bottom:60px;">
+    <h3 style="font-size:18px;margin-bottom:12px;">定制研究需求</h3>
+    <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;">
+      <table class="table" style="background:var(--color-card);">
+        <thead><tr><th>标题</th><th>描述</th><th>提交人</th><th>格式</th><th>提交时间</th><th>附件</th></tr></thead>
+        <tbody>
+        {% for r in requests %}
+          <tr>
+            <td style="font-weight:600;">{{ r.title }}</td>
+            <td style="font-size:13px;opacity:0.75;">{{ r.description|truncatewords:15 }}</td>
+            <td style="font-size:13px;">{{ r.user.email|default:r.user.username }}</td>
+            <td><span class="tag tag-neutral">{{ r.output_format }}</span></td>
+            <td style="font-size:12px;opacity:0.65;">{{ r.created_at }}</td>
+            <td>{% if r.attachment %}<a href="{{ r.attachment.url }}" target="_blank" class="ei-link" style="font-weight:600;">下载</a>{% else %}—{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" style="padding:16px;opacity:0.6;">还没有提交过研究需求</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+{% endblock %}
