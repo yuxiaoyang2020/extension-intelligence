@@ -8,31 +8,31 @@
 
   <section style="padding-top:48px;max-width:680px;">
     <div class="card-kicker" style="margin-bottom:8px;">Chrome Extension Dataset</div>
-    <h1 style="font-size:28px;margin-bottom:10px;">Chrome Extension 历史数据集</h1>
-    <p style="font-size:14px;opacity:0.7;">一个持续增长的 Chrome Extension 历史数据库 —— 与单个插件的历史分析是两个独立产品：这里提供跨插件、可下载的完整数据集。</p>
+    <h1 style="font-size:28px;margin-bottom:10px;">Chrome Extension Historical Dataset</h1>
+    <p style="font-size:14px;opacity:0.7;">A continuously growing Chrome Extension historical database — a separate product from single-extension history analysis. This gives you the full downloadable dataset across every extension.</p>
   </section>
 
   <section style="padding-top:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:8px;">
     <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
-      <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">{{ total_dates }}</div>
-      <div style="font-size:12px;opacity:0.65;margin-top:4px;">已收录快照天数</div>
+      <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">{{ history_coverage_label }}</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">Historical coverage</div>
     </div>
     <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
       <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">{{ earliest_date|default:"—" }}</div>
-      <div style="font-size:12px;opacity:0.65;margin-top:4px;">最早日期</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">Earliest date</div>
     </div>
     <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
       <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">{{ latest_date|default:"—" }}</div>
-      <div style="font-size:12px;opacity:0.65;margin-top:4px;">最新日期</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">Latest date</div>
     </div>
     <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;">
       <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);color:var(--color-accent-700);">70</div>
-      <div style="font-size:12px;opacity:0.65;margin-top:4px;">数据字段 / 产品（完整版）</div>
+      <div style="font-size:12px;opacity:0.65;margin-top:4px;">Data fields / product (full version)</div>
     </div>
   </section>
 
   <section style="padding-top:28px;margin-bottom:24px;">
-    <h3 style="font-size:18px;margin-bottom:12px;">Schema 预览（部分核心字段）</h3>
+    <h3 style="font-size:18px;margin-bottom:12px;">Schema preview (selected core fields)</h3>
     <div style="border:1px solid var(--color-divider);background:var(--color-surface);padding:20px;border-radius:var(--radius-lg);">
       {% for group in field_schema %}
       <div style="margin-bottom:16px;">
@@ -45,18 +45,18 @@
       </div>
       {% endfor %}
     </div>
-    <p style="font-size:12px;opacity:0.55;margin-top:8px;">这里只展示部分核心字段方便浏览。真实下载的 Customer Dataset（包括下面的 Sample CSV）是完整70字段：25个核心字段 + 15个产品资料字段（网站/Logo/隐私政策等） + 29个增长指标（用户增长、排名变化等）。</p>
+    <p style="font-size:12px;opacity:0.55;margin-top:8px;">Only a subset of core fields is shown here for readability. The actual Customer Dataset you download (including the Sample CSV below) has the full 70 fields: 25 core fields + 15 product metadata fields (website/logo/privacy policy, etc.) + 29 growth metrics (user growth, rank changes, etc.).</p>
   </section>
 
   <section style="margin-bottom:24px;">
     {% if viewer_plan == "professional" or viewer_plan == "custom" %}
-      <h3 style="font-size:18px;margin-bottom:4px;">你的套餐可下载的历史文件</h3>
+      <h3 style="font-size:18px;margin-bottom:4px;">Historical files your plan can download</h3>
       <p style="font-size:12px;opacity:0.6;margin-bottom:12px;">
-        {% if viewer_plan == "custom" %}Custom Intelligence：3年以上完整历史（{{ entitled_dates|length }}个日期）{% else %}Professional：1年内历史（{{ entitled_dates|length }}个日期）{% endif %}
-        —— 每个文件都是完整70字段，点击直接下载（链接1小时内有效）。
+        {% if viewer_plan == "custom" %}Custom Intelligence: full 3+ year history ({{ entitled_dates|length }} dates){% else %}Professional: 1-year history ({{ entitled_dates|length }} dates){% endif %}
+        — every file has the full 70 fields; click to download directly (link valid for 1 hour).
       </p>
       {% if downloads_unavailable %}
-        <p style="font-size:13px;color:var(--color-danger,#c0392b);">下载服务暂时不可用，请稍后刷新页面再试。</p>
+        <p style="font-size:13px;color:var(--color-danger,#c0392b);">Download service is temporarily unavailable — please refresh and try again shortly.</p>
       {% elif entitled_dates %}
         <!-- 2026-09-29：默认只展示前30个日期，超过30个时下面出现"显示更多"
              按钮，每点一次再展开30个——之前是把全部日期(Professional最多
@@ -65,12 +65,12 @@
              跟以前效果一样。 -->
         <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;">
           <table class="table" style="background:var(--color-card);" id="entitled-dates-table">
-            <thead><tr><th>日期</th><th></th></tr></thead>
+            <thead><tr><th>Date</th><th></th></tr></thead>
             <tbody>
             {% for d in entitled_dates %}
               <tr class="ei-date-row"{% if forloop.counter0 >= 30 %} style="display:none;"{% endif %}>
                 <td style="font-size:13px;opacity:0.8;">{{ d }}.csv</td>
-                <td style="text-align:right;"><a href="{% url 'intelligence:dataset_download' d %}" class="btn btn-secondary" style="padding:4px 12px;font-size:12px;">下载</a></td>
+                <td style="text-align:right;"><a href="{% url 'intelligence:dataset_download' d %}" class="btn btn-secondary" style="padding:4px 12px;font-size:12px;">Download</a></td>
               </tr>
             {% endfor %}
             </tbody>
@@ -78,7 +78,7 @@
         </div>
         {% if entitled_dates|length > 30 %}
         <div style="text-align:center;margin-top:12px;">
-          <button type="button" class="btn btn-secondary" id="show-more-dates" data-shown="30" data-total="{{ entitled_dates|length }}">显示更多（还有 {{ entitled_dates|length|add:"-30" }} 个）</button>
+          <button type="button" class="btn btn-secondary" id="show-more-dates" data-shown="30" data-total="{{ entitled_dates|length }}">Show more ({{ entitled_dates|length|add:"-30" }} remaining)</button>
         </div>
         <script>
         (function () {
@@ -97,20 +97,20 @@
             if (remaining <= 0) {
               btn.remove();
             } else {
-              btn.textContent = '显示更多（还有 ' + remaining + ' 个）';
+              btn.textContent = 'Show more (' + remaining + ' remaining)';
             }
           });
         })();
         </script>
         {% endif %}
       {% else %}
-        <p style="font-size:13px;opacity:0.6;">暂时还没有可下载的历史文件。</p>
+        <p style="font-size:13px;opacity:0.6;">No downloadable historical files yet.</p>
       {% endif %}
     {% else %}
-      <h3 style="font-size:18px;margin-bottom:12px;">历史快照文件（最近10个，共{{ total_dates }}个）</h3>
+      <h3 style="font-size:18px;margin-bottom:12px;">Historical snapshot files (most recent 10 of {{ total_dates }})</h3>
       <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;">
         <table class="table" style="background:var(--color-card);">
-          <thead><tr><th>文件名</th></tr></thead>
+          <thead><tr><th>Filename</th></tr></thead>
           <tbody>
           {% for d in recent_dates %}
             <tr><td style="font-size:13px;opacity:0.75;">{{ d }}.csv</td></tr>
@@ -118,18 +118,18 @@
           </tbody>
         </table>
       </div>
-      <p style="font-size:12px;opacity:0.55;margin-top:8px;">升级到 Professional 或 Custom Intelligence 后，这里会显示你权限范围内每一天可直接下载的完整70字段文件。</p>
+      <p style="font-size:12px;opacity:0.55;margin-top:8px;">Upgrade to Professional or Custom Intelligence to see every day's full 70-field file, directly downloadable within your plan's range.</p>
     {% endif %}
   </section>
 
   <section style="padding-bottom:60px;">
-    <h3 style="font-size:18px;margin-bottom:4px;">示例数据预览</h3>
-    <p style="font-size:12px;opacity:0.6;margin-bottom:12px;">{{ sample_date }} 这一天的快照，展示{{ sample_rows|length }}行的几个核心字段（完整数据集每天一个文件，覆盖全部产品和全部70字段）。</p>
+    <h3 style="font-size:18px;margin-bottom:4px;">Sample data preview</h3>
+    <p style="font-size:12px;opacity:0.6;margin-bottom:12px;">A snapshot from {{ sample_date }}, showing {{ sample_rows|length }} rows across a few core fields (the full dataset has one file per day, covering every product and all 70 fields).</p>
     <div style="border:1px solid var(--color-divider);margin-bottom:16px;overflow-x:auto;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
       <table class="table" style="min-width:720px;background:var(--color-card);">
         <thead><tr>
-          <th>ID</th><th>名称</th><th>分类</th><th class="ei-num">用户数</th><th class="ei-num">评分</th><th class="ei-num">评论数</th><th>版本</th><th>最后更新</th>
-          <th style="opacity:0.5;" title="真实下载的文件还有{{ sample_hidden_field_count }}个字段，这里只是预览不全部展示">⋯</th>
+          <th>ID</th><th>Name</th><th>Category</th><th class="ei-num">Users</th><th class="ei-num">Rating</th><th class="ei-num">Reviews</th><th>Version</th><th>Last Updated</th>
+          <th style="opacity:0.75;white-space:nowrap;" title="The real download has {{ sample_hidden_field_count }} more fields than this preview table shows">+{{ sample_hidden_field_count }} more fields →</th>
         </tr></thead>
         <tbody>
         {% for row in sample_rows %}
@@ -142,18 +142,18 @@
             <td class="ei-num">{{ row.rating_count }}</td>
             <td style="font-size:13px;opacity:0.7;">{{ row.version }}</td>
             <td style="font-size:13px;opacity:0.7;">{{ row.last_update }}</td>
-            <td style="font-size:12px;opacity:0.4;white-space:nowrap;" title="还有{{ sample_hidden_field_count }}个字段未展示">+{{ sample_hidden_field_count }} ⋯</td>
+            <td style="font-size:12px;opacity:0.55;white-space:nowrap;background:var(--color-surface);" title="This row also has {{ sample_hidden_field_count }} more fields not shown in this preview (website, logo, growth metrics, etc.) — the downloaded file includes all of them">+{{ sample_hidden_field_count }} more (hover)</td>
           </tr>
         {% empty %}
-          <tr><td colspan="9" style="padding:16px;opacity:0.6;">没有读到任何快照数据</td></tr>
+          <tr><td colspan="9" style="padding:16px;opacity:0.6;">No snapshot data found</td></tr>
         {% endfor %}
         </tbody>
       </table>
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <a href="{% url 'intelligence:dataset_sample_csv' %}" class="btn btn-secondary">下载 Sample CSV（50行 · 完整70字段）</a>
+      <a href="{% url 'intelligence:dataset_sample_csv' %}" class="btn btn-secondary">Download Sample CSV (50 rows · full 70 fields)</a>
       {% if viewer_plan != "professional" and viewer_plan != "custom" %}
-      <a href="{% url 'intelligence:pricing' %}" class="btn btn-primary">查看专业版，解锁完整历史下载</a>
+      <a href="{% url 'intelligence:pricing' %}" class="btn btn-primary">See Professional to unlock full history downloads</a>
       {% endif %}
     </div>
   </section>

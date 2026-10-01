@@ -7,22 +7,22 @@
 
 {% block content %}
 <main style="max-width:420px;margin:0 auto;padding:80px 32px;">
-  <div class="card-kicker" style="margin-bottom:8px;">账户</div>
-  <h1 style="font-size:26px;margin-bottom:8px;">注册</h1>
-  <p style="font-size:13px;opacity:0.7;margin-bottom:20px;">邮箱 + 密码，注册后立即可用，不需要邮箱验证。</p>
+  <div class="card-kicker" style="margin-bottom:8px;">Account</div>
+  <h1 style="font-size:26px;margin-bottom:8px;">Sign up</h1>
+  <p style="font-size:13px;opacity:0.7;margin-bottom:20px;">Email + password, ready to use right after signup — no email verification required.</p>
   <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:24px;">
-    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary btn-block" style="margin-bottom:16px;justify-content:center;">使用 Google 继续</a>
+    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary btn-block" style="margin-bottom:16px;justify-content:center;">Continue with Google</a>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
       <div style="flex:1;height:1px;background:var(--color-divider);"></div>
-      <span style="font-size:12px;opacity:0.5;">或</span>
+      <span style="font-size:12px;opacity:0.5;">or</span>
       <div style="flex:1;height:1px;background:var(--color-divider);"></div>
     </div>
     <form method="post" class="ei-form">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit" class="btn btn-primary btn-block">注册</button>
+      <button type="submit" class="btn btn-primary btn-block">Sign up</button>
     </form>
   </div>
-  <p style="font-size:13px;opacity:0.7;margin-top:16px;">已经有账户？<a href="{% url 'intelligence:login' %}" class="ei-link" style="font-weight:600;">登录</a></p>
+  <p style="font-size:13px;opacity:0.7;margin-top:16px;">Already have an account? <a href="{% url 'intelligence:login' %}" class="ei-link" style="font-weight:600;">Log in</a></p>
 </main>
 {% endblock %}

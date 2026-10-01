@@ -1,28 +1,28 @@
 {% extends "intelligence/base.html" %}
 {% load socialaccount %}
 
-{% block meta_title %}登录 — Extension Intelligence{% endblock %}
-{% block meta_description %}登录你的Extension Intelligence账户。{% endblock %}
+{% block meta_title %}Log in — Extension Intelligence{% endblock %}
+{% block meta_description %}Log in to your Extension Intelligence account.{% endblock %}
 {% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 
 {% block content %}
 <main style="max-width:420px;margin:0 auto;padding:80px 32px;">
-  <div class="card-kicker" style="margin-bottom:8px;">账户</div>
-  <h1 style="font-size:26px;margin-bottom:20px;">登录</h1>
+  <div class="card-kicker" style="margin-bottom:8px;">Account</div>
+  <h1 style="font-size:26px;margin-bottom:20px;">Log in</h1>
   <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:24px;">
-    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary btn-block" style="margin-bottom:16px;justify-content:center;">使用 Google 继续</a>
+    <a href="{% provider_login_url 'google' %}" class="btn btn-secondary btn-block" style="margin-bottom:16px;justify-content:center;">Continue with Google</a>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
       <div style="flex:1;height:1px;background:var(--color-divider);"></div>
-      <span style="font-size:12px;opacity:0.5;">或</span>
+      <span style="font-size:12px;opacity:0.5;">or</span>
       <div style="flex:1;height:1px;background:var(--color-divider);"></div>
     </div>
     <form method="post" class="ei-form">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit" class="btn btn-primary btn-block">登录</button>
+      <button type="submit" class="btn btn-primary btn-block">Log in</button>
     </form>
   </div>
-  <p style="font-size:13px;opacity:0.7;margin-top:16px;">还没有账户？<a href="{% url 'intelligence:register' %}" class="ei-link" style="font-weight:600;">注册</a></p>
+  <p style="font-size:13px;opacity:0.7;margin-top:16px;">Don't have an account? <a href="{% url 'intelligence:register' %}" class="ei-link" style="font-weight:600;">Sign up</a></p>
   <!-- 2026-09-30新增：目前没有自助找回密码流程（需要接邮件服务，暂不在
        首发范围内），登录不了的用户唯一出路是人工联系客服——这行链接
        必须存在，否则用户忘记密码就彻底卡死，连求助入口都找不到。 -->

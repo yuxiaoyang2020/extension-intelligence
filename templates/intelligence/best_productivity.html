@@ -7,17 +7,17 @@
 {% block content %}
 <main style="max-width:900px;margin:0 auto;padding:0 32px 80px;">
   <div style="padding-top:20px;font-size:12px;opacity:0.6;margin-bottom:16px;">
-    <a href="{% url 'intelligence:home' %}" class="ei-link">首页</a> /
+    <a href="{% url 'intelligence:home' %}" class="ei-link">Home</a> /
     <a href="{% url 'intelligence:category_productivity' %}" class="ei-link">Productivity</a> / Best
   </div>
 
   <section style="padding-top:8px;margin-bottom:32px;">
-    <div class="card-kicker" style="margin-bottom:10px;">精选榜单</div>
+    <div class="card-kicker" style="margin-bottom:10px;">Curated List</div>
     <h1 style="font-size:28px;margin-bottom:8px;">Best Productivity Chrome Extensions</h1>
     <p style="font-size:14px;opacity:0.7;">
-      按当前真实用户数排名的前 {{ extensions|length }} 个 Productivity 分类插件——不是编辑主观打分，
-      排序依据是每日更新的真实用户规模数据。想看完整名单，去
-      <a href="{% url 'intelligence:category_productivity' %}" class="ei-link">Productivity 分类目录</a>。
+      The top {{ extensions|length }} Productivity-category extensions ranked by real current user count — not editorial scoring,
+      just real, daily-updated user scale data. For the full list, see the
+      <a href="{% url 'intelligence:category_productivity' %}" class="ei-link">Productivity category directory</a>.
     </p>
   </section>
 
@@ -33,13 +33,13 @@
           <div style="font-size:12px;opacity:0.6;">{{ ext.developer|default:"—" }}</div>
         </div>
         <div style="text-align:right;flex:none;">
-          <div style="font-weight:700;font-family:var(--font-heading);">{{ ext.metric.user_count|fmt_users }} 用户</div>
-          <div style="font-size:12px;opacity:0.6;">评分 {{ ext.rating_value|floatformat:1|default:"—" }} · {{ ext.rating_count|fmt_users }} 评论</div>
+          <div style="font-weight:700;font-family:var(--font-heading);">{{ ext.metric.user_count|fmt_users }} users</div>
+          <div style="font-size:12px;opacity:0.6;">Rating {{ ext.rating_value|floatformat:1|default:"—" }} · {{ ext.rating_count|fmt_users }} reviews</div>
         </div>
       </a>
     </li>
     {% empty %}
-    <li style="padding:16px;opacity:0.6;">暂无符合条件的插件</li>
+    <li style="padding:16px;opacity:0.6;">No extensions match yet</li>
     {% endfor %}
   </ol>
 </main>

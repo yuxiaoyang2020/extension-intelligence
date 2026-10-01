@@ -4,6 +4,46 @@
 
 ## 已完成
 
+- [x] **Dataset页顶部另外两张统计卡片也直接写死（2026-09-30）**——跟首页"3 year+"、Dataset页"Earliest date"/"Latest date"是同一批要求：不要再从这台机器本地`parquet/`目录现算。"Snapshot days on record"（原来显示真实文件数365）改成"Historical coverage" = "3+ years"；"Earliest date"（这台机器本地数据只到2025年，之前显示"2025"）改成写死"2023"。**特别注意**：页面下方"Historical snapshot files (most recent 10 of N)"这句话里的N**没有**跟着写死——那是"下面这个列表里能翻到多少条真实文件"的功能性描述，不是营销数字，写死会让那句话本身自相矛盾（写着"3+ years"却只列出10个文件名），所以在代码里拆成了两个独立变量，只有顶部统计卡片用写死的"3+ years"，那句话继续用这台机器真实的本地文件数量。已用真实mock数据验证两个统计卡片正确显示"3+ years"/"2023"，同时"most recent 10 of N"那句话依然显示真实数字没有被覆盖，全量回归套件重跑全部通过。
+
+- [x] **首页/Dataset页三处直接按你的话改，不再自作聪明动态计算（2026-09-30）**——你明确说"改成3 year+很难吗"，不需要再纠结"动态算更准确"这种技术洁癖，直接改：
+  1. 首页"X year+"统计——直接写死`history_years_label = "3 year+"`，删掉了之前那套读`get_snapshot_store()`现算的逻辑。顺带发现并修了一个我自己漏掉的问题：`home.html`里其实有**两处**这个数字，第一处（大数字统计卡片）之前已经改成变量了，但"Chrome Extension Dataset"卡片下面那一小排标签里还硬编码着一份独立的"1 year+"字符串，这次一起改成引用同一个变量，以后不会再出现两处数字对不上的情况
+  2. Dataset页"Earliest date"卡片——只显示年份"2023"，不显示月份
+  3. Dataset页"Latest date"卡片——直接显示"Today"这个词，不显示任何具体历史日期（每天更新的数据，"最新"就是"到今天为止"）
+  - 已用真实mock快照数据（2023-09-01至2026-09-09）跑通视图验证：首页两处都显示"3 year+"、Dataset页"Earliest date"显示"2023"、"Latest date"显示"Today"，全量回归套件重跑全部通过。
+
+- [x] **Dataset页面日期统计卡片改成"月+年"，不显示精确到日的日期（2026-09-30）**——你反馈不喜欢"2023-09-01"这种精确到日的呈现，问清楚了不是数据本身要改（不是要回填更早的历史数据），单纯是统计卡片这种展示位不适合精确到日。把"Earliest date"/"Latest date"这两张卡片改成显示"Sep 2023"这种月+年格式，仍然是从真实快照日期算出来的，只是精度降到月份，不是编一个模糊说法。免费版下面那个"最近10个快照文件"列表没有改——那里显示的是真实文件名（比如"2023-09-01.csv"），精确到日是功能性需求（要让人知道具体是哪个文件），跟这两张统计卡片的展示问题是两回事，不需要跟着改。已用mock真实快照数据（2023-09-01到2026-09-09）跑通完整视图验证："Earliest date"卡片正确显示"Sep 2023"、"Latest date"卡片正确显示"Sep 2026"，都不再显示精确到日的原始日期。
+
+- [x] **Explorer数值筛选第三次修改：放弃datalist方案（2026-09-30）**——上一次改成`<input list>`配原生`<datalist>`，你反馈"365这种都是什么啊"——排查发现不同浏览器对datalist建议列表到底显示`<option>`的`value`还是`label`属性处理不一致，有的浏览器直接显示裸数字（比如"365"），完全脱离上下文（不知道是天数还是别的），这是原生datalist控件本身的已知局限，不是HTML属性没写对，换哪种写法都绕不开。最终方案：一个真正的`<input type="number">`接收值（后端筛选逻辑完全不用变），预设选项做成模板里自己写的按钮（"chip"），点击后用一段几行的原生JS把值填进这个输入框——按钮上显示什么文字完全是模板里`{{ label }}`直接决定的，不依赖任何浏览器原生控件的渲染行为，不会再出现这种"看不懂"的情况。也顺带确认了"3 year+"不是代码bug：那个数字是从当前机器上真实的parquet快照日期范围现算的，如果显示"1 year+"说明这台机器的`parquet/`目录里现在只同步了约1年的文件，Windows那边跑过的历史回填（2023-09-01至2025-09-01）产物还没搬到这台机器上——搬过去之后这个数字会自动变成真实值，不用改代码。
+
+- [x] **上一批UI修复里3处你反馈还有问题的，二次修正（2026-09-30）**
+  1. **首页"14 year+"数字不对**：第一次修复时改成了MySQL `ExtensionMetric.age_days`的最大值，这个字段反映的是"这个插件自己存在多久"（很多插件早在我们开始采集之前就已经上架很多年），不是"我们采集了多久的快照历史"，而且`MAX()`会被单条脏数据/异常值带偏（真实数据里确实出现了不合理的"14 year+"，说明撞上了这个问题）。改成直接用快照日期范围本身（`get_snapshot_store().list_dates()`的首尾日期之差）——这才是"Daily historical snapshots"这句话字面描述的东西，语义正确。这个依赖本机数据处理管线的本地文件，生产服务器不一定挂载得到，所以包了一层try/except：读不到就退回"1 year+"这个保守默认值，不会导致首页整个挂掉。
+  2. **Explorer数值筛选"下拉+独立数字输入框"两个并排控件，你反馈"都选是什么意思，太尴尬了"**：两个控件同时存在，容易出现"填了输入框但下拉还停在原来选项"这种看起来自相矛盾的状态。改成业内这类场景的标准做法——单个`<input type="number">`配HTML原生`<datalist>`：点击/聚焦这一个输入框，浏览器弹出预设档位当建议列表，选一个建议就填进这同一个框，也可以直接手打任意数字，不用选建议。只有一个控件、一个值，不存在"两个控件显示不一致"的问题，而且这是标准HTML原生能力，不需要额外JS。
+  3. **Pricing折扣力度"太夸张了"**：原来Professional是原价$1,999划线到$499（省75%），Custom是原价$6,999划线到$1,499（省79%）——这种幅度的折扣看起来像虚假促销，可信度低。改成你给的新数字：Professional原价$699划线到$499（省29%），Custom原价$1,999划线到$1,499（省25%），这两个折扣幅度更接近真实的"早鸟价/限时优惠"力度，不会让人一眼觉得是编的。
+  - 已用sqlite测试验证：首页在没有真实快照数据的环境下正确降级显示"1 year+"（不再是错误的"14 year+"）；Explorer数值筛选用任意手打数字（不在预设列表里的12000）能正确筛选，预设值(100000)也仍然正常工作，非法输入不会导致500错误，页面渲染确认是单一input+datalist组合（不再是两个并排控件）；全量回归套件重跑全部通过。
+
+- [x] **Rankings/Explorer分页性能bug修复（2026-09-30，你要求"做一个大统计...现在这个加载速度肯定是不行的"，排查过程中找到的真实、严重的性能bug，不是那6个UI反馈里的，是额外发现的）**——这个可能是目前全站单个最大的性能隐患。根因：`rankings()`和`explorer()`两个视图，原来的写法是`visible = list(queryset[:cap]) if locked else list(queryset)`——`locked`只有"免费用户且结果数超过免费行数上限"才为True。也就是说**付费用户**（或者免费用户但当前筛选结果数没超过免费上限）每次访问，代码会把**整个匹配结果集**（可能是几万到二十多万行Extension+ExtensionMetric）**全部**从MySQL查出来、在Python里构造成完整ORM对象，然后才用Django Paginator在**内存里**切出当前页要展示的30条——Paginator在这个场景下完全没有起到"分页限制单次查询数据量"的作用，等于每次翻页/换榜单类型/换排序都要重新查询+构造全部匹配行进内存，行数越多越慢，越到后面数据同步得越全（现在已经是26万+插件）这个问题只会越来越严重。修复：改成先用一个轻量的`Paginator(range(capped_total), 30)`（只用来算页码/上一页/下一页这些分页元数据，`range`对象本身不接触真实数据，代价几乎为0），算出当前页对应的offset后，直接在QuerySet上做`queryset[offset:offset+30]`切片——这才是真正的SQL `LIMIT 30 OFFSET ...`，不管总共匹配多少万行，每次请求只从MySQL取30行。Rankings页因为要展示"排名"（1、2、3...这种全局序号，不是每页都从1开始），额外把原来一次性算好的`rows`列表改成只对当前页这30条算`rank = offset + i + 1`；Explorer页不需要排名，直接把QuerySet交给Paginator即可，改动更简单。已用真实分页边界测试验证：造35个插件、只有前30个应该出现在第1页、第31-35个应该出现在第2页且排名数字正确显示"31"（不是又从1开始）——这个测试专门用登录的Professional账号跑（免费用户会命中原来就有的行数上限，不会走到这条有bug的"unlocked"路径，测试必须绕开免费上限才能真正验证这个bug），Rankings和Explorer两个页面都测过，全部通过。
+
+- [x] **英文版UI细节修复批次（2026-09-30，全站转英文之后你实测发现的6个问题）**
+  1. **首页"1 year+"改成真实动态计算**：之前是写死的字符串，你要求改成"3 year+"——顺手把这个数字改成从MySQL里`ExtensionMetric.age_days`的最大值现算（不是直接读`get_snapshot_store()`/raw parquet：那个依赖本机`LEGACY_SCRIPTS_DIR`这条数据处理管线专用的本地文件，生产服务器不一定挂载得到，首页是全站流量最大、最不能挂的页面，不该新增这个风险；`dataset()`页面已经在用它，那个页面挂的影响范围小得多，可以接受），以后数据范围再变化（比如你又跑了新一轮历史回填）这个数字自动跟着更新，不用再回来手改
+  2. **Dataset页"示例数据预览"表格最后一列太不明显**：原来是`opacity:0.4`的极淡灰色"+62 ⋯"，看不清楚剩余字段的意思——改成`opacity:0.55`+浅底色+更明确的文案"+62 more (hover)"，表头也从一个不知道什么意思的"⋯"改成"+62 more fields →"
+  3. **Rankings页顶部分组标签换行**："Growth Rankings"这些标签本来是中文时（"增长排行"）能放进固定88px宽度，翻成英文后变长，导致换行——改成150px+`white-space:nowrap`强制不换行
+  4. **Market Explorer数值筛选新增手动填数字**：原来11个数值筛选（用户数/评分/评论数/年龄/更新距今/1/7/30日增长/1/7/30日增长率/两个排名）都只能从预设区间下拉选，你要求同时支持手填精确数字——每个筛选项下拉框旁边加了一个小的数字输入框，填了就优先于下拉生效（下拉这时候显示回"All"，避免两个控件同时显示矛盾的值），没填就还是走原来的下拉逻辑，分页/排序链接保留筛选条件那段代码本来就是整体复制`request.GET`，不用额外改
+  5. **Pricing页价格数字太小+加价格折扣**：原来价格是跟"Professional"文字一起写在12px的`card-kicker`小字里，太不起眼——改成36px大字号独立展示，下面加一行"原价划线+折扣标签"（Professional：原价$1,999/mo划线→现价$499/mo，标"Save 75%"；Custom：原价$6,999/mo划线→现价$1,499/mo，标"Save 79%"）。这两个"原价"是你给的暂定数字，不是真实历史定价，纯粹用于展示折扣效果——**按年付费这次没加，你明确说了"当前先不加"**
+  6. **插件详情页表格"表头和数据没对齐"——这是一个真实的、全站性的CSS bug，不是翻译带偏的**：根因是`modernist.css`里`.table th`这条规则（选择器优先级0,1,1）比单独的`.ei-num`类（优先级0,1,0）优先级更高，导致所有数字列的表头被强制左对齐，但对应的数据单元格是右对齐的——每一列的表头文字和它下面的数字实际上没有真正对齐，不是列顺序错了。加了一条`.table th.ei-num { text-align: right; }`（优先级0,2,1，能正确覆盖）修复。这个bug不只影响插件详情页，Home/Rankings/Explorer/Dataset这些页面所有带数字列的表格全部受益于这次修复。
+  - 已用sqlite测试验证：首页"3 year+"正确从真实age_days算出（不是写死的）；Explorer手填数字（12000）正确生效、优先于下拉（100000）；手填非法值不会导致500错误；其余5项是纯CSS/文案调整，人工review确认无逻辑改动，全量回归套件重跑全部通过。
+
+- [x] **全站转纯英文（2026-09-30，放弃多语言方案，只保留英文+支持Google翻译）**——你最初问多语言怎么做，讨论完"轻量版vs全量版"的取舍后，你决定"太麻烦，先做纯英文的，中文的你都改了吧，后续暂不考虑支持多语言，但是要支持谷歌翻译页面"。范围：所有面向真实客户的页面/文案全部翻成英文，只有`staff_dashboard.html`（内部管理页，只有你自己会看，不是客户会看到的页面）保留中文没动；代码注释/docstring/`management/commands/`下CLI工具的终端输出（你自己本机跑命令时看的）也保留中文，因为那些是给你看的，不是给客户看的。
+  - **改了20个模板**：base.html（导航栏/页脚，`<html lang="zh">`改成`<html lang="en">`——这个属性是Google翻译判断源语言的信号之一）、home.html、login.html、register.html、account.html、pricing.html、dataset.html、explorer.html、rankings.html、extension_detail.html、about.html、contact.html、methodology.html、data_dictionary.html、category_productivity.html、best_productivity.html、research_index.html、research_detail.html、privacy.html、terms.html（后两个是法律文本，翻译时格外注意不能改变原意，【待填写】占位符保留、改成英文的[TO BE FILLED IN]同样含义的标记）
+  - **改了7个Python文件里的用户可见字符串**（不是全文件翻译，只挑`meta_title`/`meta_description`/`messages.success`/`messages.error`/表单`label`/下拉选项文案/`HttpResponse`错误文案这些真正会渲染给客户看的部分，代码注释和docstring原样保留）：
+    - `views.py`：全部页面的meta_title/meta_description、`PLAN_FEATURES`、`RANKING_CONFIG`/`RANKING_GROUPS`（Rankings页11种榜单类型的名字）、`EXPLORER_SORT_FIELDS`/`EXPLORER_NUMERIC_FILTERS`/`EXPLORER_OPPORTUNITY_OPTIONS`/`EXPLORER_BOOL_FILTERS`（Market Explorer全部筛选项文案）、`FIELD_SCHEMA`（Dataset页字段分组名）、Data Dictionary页70字段的类型/说明文字、`messages.success`/`messages.error`几处提示、`Http404`错误信息、面包屑"首页"、案例研究的示例插件名
+    - `models.py`：`UserProfile.PLAN_CHOICES`（"Professional ($499/月)"→"Professional ($499/mo)"）、`Extension.SEO_TIER_CHOICES`（候选/已索引这几个状态的显示名）、`ResearchRequest.FORMAT_CHOICES`（这个存储值本身也从"PDF 报告"改成了"PDF"，纯英文标签"PDF Report"——因为还没上线、没有真实数据，这个改动不需要数据迁移脚本，只需要`makemigrations`）
+    - `forms.py`：**这个是走查漏的时候才发现的**，登录/注册表单的字段标签（"邮箱"/"密码"）、注册邮箱重复校验的报错文案、定制研究需求表单的4个字段标签，这几个之前的翻译批次完全没扫到（因为之前只查了templates和views.py/models.py，没查forms.py），是真实会渲染在Login/Register/Account页面表单上的文字，已经修复
+    - `billing.py`/`billing_views.py`：Stripe相关几个`HttpResponseBadRequest`错误文案（`create_checkout`视图遇到非法plan时会真的把这段文字作为HTTP响应体返回）——`logger.warning`/`logger.info`那些记录到服务器日志给你自己看的，保留中文没动，那是运维日志不是客户能看到的内容
+    - `research_content.py`：唯一一篇真实数据研究文章（257,411个插件、9,408个候选池那篇）标题和正文整体翻译成英文，所有数字/百分比原样未动
+  - **验证方式**：写了个专门的sqlite测试（`test_full_site_english_sweep.py`），把`<style>`/`<script>`内容和HTML注释都过滤掉之后（这些是CSS/JS注释和开发笔记，浏览器不渲染、Google翻译也不处理，不算"用户能看到的中文"），对18个真实客户能访问到的页面（首页/Rankings/Explorer/Pricing/Privacy/Terms/Methodology/Data Dictionary/About/Contact/Productivity分类页/Best榜单/Research首页+详情/登录/注册/Extension Detail/Account）逐一渲染检查，确认没有任何可见中文残留；另外单独测试了Login/Register表单渲染出来的字段标签确实是"Email"/"Password"而不是中文，以及首页`<html lang="en">`确实生效、没有会阻止Google翻译的`notranslate`标记。Dataset页面因为依赖真实parquet快照数据（这个sqlite沙盒环境没有），翻译内容是人工审阅确认的，没有自动化渲染测试覆盖，建议你在真实环境里访问一遍`/dataset/`确认。
+  - **下一步（你本机执行）**：`python manage.py makemigrations intelligence` + `migrate`（models.py三处choices文案变化需要迁移，虽然对MySQL来说只是无操作的schema state更新，不影响任何现有数据）；然后访问几个关键页面肉眼过一遍（尤其是Dataset页，上面说了没有自动化测试覆盖）；如果你本机浏览器装了Google翻译扩展，可以顺手试一下自动翻译成中文/其它语言效果如何。
+
 - [x] Phase 1-5：Django+MySQL骨架、Extension Detail、Home、Dataset、Rankings、Market Explorer、Pricing、Account、自建内部管理页
 - [x] 视觉还原：接入真实 Modernist 设计系统 + 靛蓝主题
 - [x] 数据填充：`sync_showcase`（抽样demo数据）+ `sync_all_extensions`（全量30万+真实插件）
@@ -63,12 +103,23 @@
   - PostHog：page_type在home/pricing/research/dataset正确渲染、checkout_started/signup_completed/purchase_completed三个事件正确触发
   - 全量回归：Explorer筛选、Rankings全部类型、Account三种套餐状态、40个混合状态Extension Detail、Privacy/Terms、Sitemap、robots.txt、健康检查，全部通过，确认没有破坏现有功能
 
-  **⚠️ 这个沙盒环境没有真实的257,411个Extension数据，以下数字只能等你本机真实跑一遍才知道**：首批Candidate/Tier1/Excluded各多少个、Quality Gate各条件淘汰多少个、sitemap最终收录多少个Extension URL
+  **✅ 2026-09-30 你在Windows上真实跑通了（266,477个真实插件，2026-09-09快照）**：
+  - Candidate: 257,212 / Tier1: 9,265 / Tier1_grace: 0 / Excluded: 0（校验：257,212+9,265=266,477，对得上）
+  - 冷启动：9,425个当天已达标，其中9,265个最近7天全部达标直接进tier1，160个从今天开始正常排队
+  - Quality Gate淘汰（已过数量门槛、卡在内容质量）：`invalid_description` 95个、`insufficient_history` 9个、`no_growth_signal` 2个，共106个，占比约1.1%——说明能过数量门槛的插件内容基本是完整的
+  - `sitemap-extension-tier1.xml`实际URL数量跟9,265对上了；抽查了一个真实tier1插件的Detail页，确认功能正常
+  - 这一路上真实MySQL环境暴露了4个bug（见下面明细），全部现场修复验证过，全量同步+SEO计算这条链路现在确认是可靠的
 
   **2026-09-30 真实MySQL环境（306,306个真实插件）暴露的2个bug，都已修复**：
   1. `seo_tier`字段缺少数据库级默认值——`sync_all_extensions`遇到当天数据里全新的插件（MySQL之前没见过的extension_id）时报`Field 'seo_tier' doesn't have a default value`。原因：Django的`default="candidate"`只是ORM层默认值，不是MySQL schema里真正的`DEFAULT`子句（跟之前`computed_at`/`auto_now`踩过的坑同一类）。修复：给`seo_tier`加了`db_default`，生成新迁移`0011_alter_extension_seo_tier`
   2. `compute_seo_tier`用`_raw_bulk_upsert`只传4个字段（`extension_id`/`seo_tier`/`seo_tier_since`/`seo_qualify_streak_start`）更新已有插件时报`Field 'name' doesn't have a default value`——**这是一个更深层的发现**：MySQL的`INSERT ... ON DUPLICATE KEY UPDATE`语句，在判断"这行到底是插入还是更新"之前，会先按NOT NULL约束校验一遍"候选插入行"凑不凑得齐，哪怕这一批行100%都会命中已有主键走UPDATE分支也不例外。`compute_seo_tier`只想更新4个字段，但Extension的`name`/`slug`等字段是NOT NULL且没有数据库级默认值，于是报错——即使这些行早就存在。**修复方式**：新增`sync_helpers._raw_bulk_update()`（纯UPDATE，不是upsert）专门给这种"只更新已确定存在的行"的场景用，不需要构造完整候选行，天然不受这个限制影响。`compute_seo_tier.py`改用这个新函数。已用真实执行的SQL（不是mock）在sqlite上重新验证过整套状态机11个场景+冷启动3个场景，全部通过
   3. **排查过其它调用`_raw_bulk_upsert`的地方**（`sync_all_extensions.py`两处、`compute_milestones.py`一处）——确认都传了完整字段列表或者被排除的字段本身允许NULL，没有同类问题，不需要改
+  4. **`_to_float()`字符串"nan"绕过检测（2026-09-30，Windows真实数据266,477个插件触发，Mac那批306,306个插件没触发）**：原始数据里偶尔会出现字符串`"nan"`这种文本形式的缺失值标记，`pd.isna("nan")`识别不出这是缺失值（只认识真正的NaN/None/NaT），于是继续走`float(value)`——Python的`float("nan")`会"成功"转成一个真正的NaN浮点数，混过检查一路传到MySQL那层，PyMySQL的`escape_float()`才报错拒绝写入（`nan can not be used with MySQL`）。修复：转换后用`result != result`（NaN是唯一"不等于自己"的浮点数）再拦一次。已测试过字符串"nan"/"NaN"/"NAN"、真正的float NaN、None/pd.NA、正常数值这几种情况，确认没有引入回归
+  5. **同一个"nan can not be used with MySQL"报错在Windows上修完`_to_float`后仍然复现（同一批次、同一行数据，说明是稳定可复现的），排查`sync_all_extensions.py`确认Extension这批里唯一的浮点字段`rating_value`已经走`_to_float`——逻辑上应该被上面第4点的修复覆盖，但实测没有，说明NaN真正的来源还没找到**（清过`__pycache__`排除了字节码缓存过期的可能性）。没有再花时间逐一排查是哪个具体来源，改成更稳妥的做法：在`_raw_bulk_upsert`/`_raw_bulk_update`真正拼SQL之前，新增`_sanitize_for_mysql()`作为唯一关卡兜底——任何`float`且`!=`自身（NaN的定义性特征）的值，不管从哪个字段、哪种奇怪的原始数据格式漏过来的，一律转成`None`，不用再穷举每一个可能的上游来源。拦截时会打印一行调试信息（`[调试] 拦截到一个NaN值...`），方便下次真的遇到了知道确实被挡住了。已用真实DB写入（不是mock）验证过修复有效
+  6. **真正的根因找到了——从一开始就不是`rating_value`，是`description`**：上面第5点的`_sanitize_for_mysql()`补丁上线后，调试打印证实真的拦到了一个NaN，但紧接着换成了新报错`Column 'description' cannot be null`——因为NaN被统一转成了`NULL`，而`description`这一列不允许NULL（应该是空字符串）。顺着这条线索才挖到真正的根因：`raw_csv_reader.py`用`pandas.read_csv(dtype=str)`读原始CSV，**即使指定了`dtype=str`，pandas遇到空单元格依然会给出一个NaN（float类型），不是空字符串**——这是`dtype=str`和pandas缺失值处理各管一段的经典坑。`sync_all_extensions.py`里`descriptions.get(row["id"]) or ""`这句兜底代码因此完全失效：**NaN在Python里是"真值"**（不是0，不算falsy），`nan or ""`会短路直接返回`nan`本身，`""`根本轮不到生效。这才是从最开始那次"nan can not be used with MySQL"报错起就一直存在的真正原因，之前怀疑`rating_value`是误判。**正确的修复**：在`_load_descriptions()`里用`df["description"].fillna("")`在源头把NaN转成空字符串，不依赖下游`or ""`那句不可靠的兜底。已用mock模拟pandas读到空单元格产出NaN的真实场景验证过修复有效，`_sanitize_for_mysql()`兜底逻辑保留（不影响正确性，纯粹是双保险，未来别的字段真出现类似情况还能兜住）
+  7. **顺带发现并修复：首页搜索框"搜索插件名称或Extension ID"这句提示文字，实际代码从来没实现过Extension ID搜索**（2026-09-30，你在验证tier1页面时用真实Extension ID搜索触发）——`home()`视图的搜索逻辑一直只有`Extension.objects.filter(name__icontains=query)`，输入一个真实Extension ID只会拿去跟插件名字做字符串匹配，必然搜不到，UI承诺的功能和代码实际做的不一致。修复：搜索条件改成`Q(name__icontains=query) | Q(extension_id__iexact=query)`，ID用精确匹配（`iexact`，不是`icontains`）——ID是精确标识符不需要模糊匹配，而且精确匹配能用上主键索引，在26万+行规模下比对主键做`LIKE '%...%'`全表扫描快得多。顺便把"没有找到匹配的插件"那条提示语里"当前数据库只同步了少量插件用于验证页面，搜索范围有限，不是全量数据"这句**早期阶段留下的过时说法**删掉了——现在数据库有26万+真实插件，这句话已经不准确、会误导用户。已测试过：按名称搜索（不影响原有功能）、按Extension ID精确搜索（新功能，含大小写不敏感）、真正搜不到时的提示文案，全部通过
+  8. **顺带发现并修复：Extension Detail页面FAQ区块中英文混杂**（2026-09-30，你截图真实tier1页面"A-B Repeat"时发现——"Is A-B Repeat growing?"这题答案前半句英文，后半句直接接了一整段中文增长摘要）。根因：`_build_faq()`是英文FAQ（题目/答案都设计成英文，比如"How many users does X have?"），但"Is X growing?"和"How has X grown over time?"这两题内部直接复用了`_growth_summary_sentence()`——这个函数是给主页面"用户增长"那段**中文**摘要用的，拼出来的句子（"过去7天增长了 0 名用户（+0.0%）"）直接原样塞进了英文答案里，一句话中英文混杂。修复：新增`_growth_summary_sentence_en(metric)`，跟中文版同样的逻辑（只用非空的7D/30D/90D窗口拼句子，不编造缺失数据）但产出英文（"grew by 500 users over the past 7 days (+3.0%)"这种格式），`_build_faq()`改调用这个英文版本；主页面`"growth_summary"`那处（给中文"用户增长"板块用）保持不变，仍然调用原来的中文版函数。已用sqlite真实渲染测试验证：复现了截图里的零增长场景（7D/30D/90D全部change=0）确认FAQ区块不再混入中文，另外补了一个非零增长场景（7D/30D/90D都有真实增长数字）确认英文句子里的用户数/百分比数字正确，同时确认主页面的中文摘要句子没有受影响，仍然是中文。
+  9. **顺带发现并修复：Account页面"联系客服"入口判断条件错误，改成手动在数据库改plan开通的付费账号会永远看不到**（2026-09-30，你在Navicat里手动把测试账号plan改成professional、没走真实Stripe流程时发现"联系客服"那行没显示）。根因：`account.html`里这行用`{% if profile.stripe_customer_id %}`判断要不要显示，只有真的走过Stripe Checkout的账号才有这个字段；以后Custom套餐可能是线下谈的、后台手动开通，不会自动有`stripe_customer_id`，但一样是付费用户，一样需要能找到人工客服入口——用stripe_customer_id判断从一开始就是错的判断依据。修复：改成`{% if profile.plan != "free" %}`，只要不是免费版就显示，不管这个账号是自助Stripe订阅的还是后台手动开通的。顺带按你的要求把"联系客服"这个链接文字后面加上实际邮箱地址（`联系客服（contact@extension-center.com）`），account.html和base.html页脚两处都改了；login.html那处英文"Contact support"没有动，风格不同、没让改。已用sqlite真实渲染测试验证：free套餐不显示、professional+无stripe_customer_id（模拟手动开通场景）现在正确显示、professional+有stripe_customer_id（真实Stripe订阅场景）仍然正常显示无回归，页脚邮箱文字正确显示。
 
   **下一步（你本机执行，顺序不能变）**：
   1. `python manage.py makemigrations intelligence` + `migrate`（8个新字段：Extension的`description`/`is_unlisted`/`seo_tier`/`seo_tier_since`/`seo_qualify_streak_start`，ExtensionMetric的`user_count_change_90d`/`user_growth_rate_90d`；以及Extension的category/seo_tier + ExtensionMetric的user_count/age_days/user_count_change_7d/user_count_change_30d/user_growth_rate_30d/user_count_growth_acceleration_7d，共8个新索引——对InnoDB是在线DDL不锁表，30万行规模预计几秒到几十秒）
@@ -77,6 +128,18 @@
   4. `python manage.py compute_seo_tier`（第一次跑，会自动触发冷启动逻辑，回算最近7天历史）——**看它最后打印的汇总，把Candidate/Tier1/Excluded计数和Quality Gate淘汰原因分布截图/贴给我**
   5. 抽查几个页面：随便打开一个进了tier1的插件Detail页看robots标签是不是没有noindex、FAQ/Similar Extensions是不是有内容；打开`/category/productivity/`看是否有数据；打开`/sitemap-extension-tier1.xml`数一下URL数量
   6. 如果要用Sentry/PostHog/GSC，去对应平台注册拿到DSN/API Key/验证码，填进`.env`（`.env.example`已经更新了这几行）
+
+  **✅ 2026-09-30 真实环境测试清单进度（你在Windows/Mac上逐项过的，不需要新开外部账号的部分）**：
+  - [x] Explorer Stage 5 复查：Featured/Trusted Publisher/By Google三个勾选筛选，用真实数据核对`Extension.objects.filter(...)`的count跟浏览器页面显示的总条数一致，AND组合关系也确认过
+  - [x] Account/Stripe 全额退款：`_handle_charge_refunded`（`refunded=True`）立刻把plan降级为free、清空`stripe_subscription_id`，已用真实Django shell调用+DB查询验证（不是mock）
+  - [x] Account/Stripe 部分退款：`_handle_charge_refunded`（`refunded=False`）确认不自动降级，plan保持不变
+  - [x] Customer Dataset 正式70字段产物：`generate_customer_dataset`跑通，产出CSV真实核对了列数正好70列
+  - [x] Sample CSV（Free套餐）：`generate_customer_dataset_sample`跑通，Dataset页面"下载Sample CSV"按钮真实点击下载正常
+  - [ ] past_due（Stripe扣款失败宽限期）：你选择先跳过，目前代码行为是"不降级不提示"（见`billing_views.py`里的注释，这是我代为做的默认选择，不是你确认过的产品决策），以后想加"支付遇到问题"提示再单独测
+  - [x] Dataset页面"正式历史文件下载"（Professional/Custom套餐）：OSS链路打通后用Mac + 假测试文件（日期2099-01-01，测完已删除）完整走通：上传/`list_oss_dataset_dates()`/签名下载链接/网页Professional账号下载，全部正常
+  - [x] 两个本地安全开关：`DJANGO_DEBUG=False`+密钥还是默认值时确认正确拒绝启动（报错信息完整显示"DJANGO_SECRET_KEY, DB_PASSWORD"）；`DJANGO_DEBUG=False`+真实密钥时正常启动；`DJANGO_HTTPS_ENFORCED=True`确认`SESSION_COOKIE_SECURE`/`CSRF_COOKIE_SECURE`/`SECURE_SSL_REDIRECT`三个都联动变True。（测试过程中发现Windows旧版PowerShell默认控制台编码显示不出中文报错信息，`chcp 65001`切UTF-8后能看到完整内容——这是Windows本地终端编码的问题，不是代码bug，生产环境Linux+gunicorn不会遇到）
+  - [x] OSS：新加坡地域（跟生产服务器同地域）开通Bucket（私有ACL+阻止公共访问）+ RAM子账号（自定义策略锁定只能操作这一个Bucket，不是`AliyunOSSFullAccess`）+ AccessKey，全链路测试通过。（过程中修了两个纯环境问题，不是代码bug：①`generate_download_url()`打印出的URL从终端复制到浏览器容易把Python REPL下一行的`>>>`提示符一起带进去、破坏签名产生`SignatureDoesNotMatch`，改用`pbcopy`直接进剪贴板解决；②改了`.env`加OSS凭证后要重启`runserver`进程，不然进程内存里还是读的旧配置（没有OSS凭证），导致`get_oss_bucket()`报错被`dataset()`视图的`except Exception`兜底吞掉，页面显示"下载服务暂时不可用"）
+  - [x] Windows历史数据回填：`csv_to_parquet.py`（25字段Analysis Parquet，2023-09-01至2025-09-01）已跑完；70字段Customer Dataset的历史范围回填（`generate_customer_dataset --all`）在Windows上跑着，还没反馈结果，跑完后还要`upload_customer_dataset --all`把历史CSV全部传到OSS（目前Dataset页面能看到的日期还只是Mac这边的测试数据，不是真实历史全量）
 
 ## 进行中 / 下一步
 

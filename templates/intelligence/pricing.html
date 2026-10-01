@@ -6,102 +6,122 @@
 {% block content %}
 <main style="max-width:1180px;margin:0 auto;padding:0 32px 80px;">
   <section style="padding-top:48px;max-width:640px;">
-    <div class="card-kicker" style="margin-bottom:10px;">方案与定价</div>
-    <h1 style="font-size:30px;margin-bottom:10px;">从免费探索，到完整数据资产</h1>
-    <p style="font-size:14px;opacity:0.7;">三档方案对应三种使用深度 —— 体验产品、自主研究、或获得完整数据集与研究支持。</p>
+    <div class="card-kicker" style="margin-bottom:10px;">Plans & Pricing</div>
+    <h1 style="font-size:30px;margin-bottom:10px;">From free exploration to the full data asset</h1>
+    <p style="font-size:14px;opacity:0.7;">Three plans for three levels of depth — try the product, do your own research, or get the full dataset with research support.</p>
   </section>
 
   <section style="margin-top:32px;margin-bottom:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
     <div style="background:var(--color-card);padding:28px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;">
-      <div class="card-kicker">免费版 · $0</div>
-      <h3 style="font-size:20px;margin:8px 0 4px;">体验产品</h3>
-      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">探索 Chrome Extension 市场情报。</p>
+      <div class="card-kicker">Free</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin:8px 0 2px;">
+        <span style="font-size:36px;font-weight:800;font-family:var(--font-heading);">$0</span>
+      </div>
+      <div style="height:26px;margin-bottom:8px;"></div>
+      <h3 style="font-size:20px;margin:8px 0 4px;">Try the product</h3>
+      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">Explore Chrome Extension market intelligence.</p>
       <ul style="list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13px;">
-        <li>· 搜索插件</li>
-        <li>· 基础插件信息</li>
-        <li>· 排行榜预览（有限结果）</li>
-        <li>· 机会信号预览（Top 3）</li>
-        <li>· 30 天历史分析</li>
-        <li>· 数据集示例数据</li>
+        <li>· Search extensions</li>
+        <li>· Basic extension info</li>
+        <li>· Rankings preview (limited results)</li>
+        <li>· Opportunity signal preview (Top 3)</li>
+        <li>· 30-day history analysis</li>
+        <li>· Sample dataset data</li>
       </ul>
-      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">适合初步了解市场、评估产品是否适合自己。</p>
+      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">Good for getting a first look at the market and evaluating fit.</p>
       {% if current_plan == "free" %}
-        <button class="btn btn-secondary btn-block" style="margin-top:auto;" disabled>当前方案</button>
+        <button class="btn btn-secondary btn-block" style="margin-top:auto;" disabled>Current plan</button>
       {% else %}
         <form method="post" action="{% url 'intelligence:billing_portal' %}" style="margin-top:auto;">
           {% csrf_token %}
-          <button type="submit" class="btn btn-secondary btn-block">管理订阅以降级</button>
+          <button type="submit" class="btn btn-secondary btn-block">Manage subscription to downgrade</button>
         </form>
       {% endif %}
     </div>
     <div style="background:var(--color-card);padding:28px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);display:flex;flex-direction:column;">
-      <div class="card-kicker">专业版 · $499/月</div>
-      <h3 style="font-size:20px;margin:8px 0 4px;">自己动手研究市场</h3>
-      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">完整平台功能，深入研究每一个信号。</p>
+      <div class="card-kicker">Professional</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin:8px 0 2px;">
+        <span style="font-size:36px;font-weight:800;font-family:var(--font-heading);">$499</span>
+        <span style="font-size:13px;opacity:0.6;">/mo</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="text-decoration:line-through;opacity:0.5;font-size:13px;">$699/mo</span>
+        <span class="tag tag-accent" style="font-size:10px;">Save 29%</span>
+      </div>
+      <h3 style="font-size:20px;margin:8px 0 4px;">Research the market yourself</h3>
+      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">Full platform access to dig into every signal.</p>
       <ul style="list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13px;">
-        <li>· 完整排行榜与机会榜</li>
-        <li>· 高级市场探索筛选</li>
-        <li>· 完整插件历史分析</li>
-        <li>· 同类对标与里程碑分析</li>
-        <li>· Chrome Extension 数据集访问（1年内历史）</li>
-        <li>· 数据集历史导出</li>
+        <li>· Full rankings and opportunity boards</li>
+        <li>· Advanced Market Explorer filters</li>
+        <li>· Full extension history analysis</li>
+        <li>· Peer comparisons and milestone analysis</li>
+        <li>· Chrome Extension Dataset access (1-year history)</li>
+        <li>· Historical dataset export</li>
       </ul>
-      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">适合独立开发者、Studio 与市场研究人员自主分析。</p>
+      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">Good for independent developers, studios, and market researchers doing their own analysis.</p>
       {% if current_plan == "professional" %}
-        <button class="btn btn-secondary btn-block" style="margin-top:auto;" disabled>当前方案</button>
+        <button class="btn btn-secondary btn-block" style="margin-top:auto;" disabled>Current plan</button>
       {% else %}
         <form method="post" action="{% url 'intelligence:billing_checkout' plan='professional' %}" style="margin-top:auto;"
               onsubmit="if(window.posthog){posthog.capture('checkout_started',{plan:'professional'});}">
           {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-block">升级到专业版</button>
+          <button type="submit" class="btn btn-primary btn-block">Upgrade to Professional</button>
         </form>
       {% endif %}
     </div>
     <div style="background:var(--color-card);padding:28px;border:1px solid var(--color-divider);border-top:3px solid var(--color-accent);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);display:flex;flex-direction:column;">
-      <div class="card-kicker">定制情报版 · $1,499/月</div>
-      <h3 style="font-size:20px;margin:8px 0 4px;">数据资产 + 研究支持</h3>
-      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">获得完整数据集，以及我们的研究支持。</p>
+      <div class="card-kicker">Custom Intelligence</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin:8px 0 2px;">
+        <span style="font-size:36px;font-weight:800;font-family:var(--font-heading);">$1,499</span>
+        <span style="font-size:13px;opacity:0.6;">/mo</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="text-decoration:line-through;opacity:0.5;font-size:13px;">$1,999/mo</span>
+        <span class="tag tag-accent" style="font-size:10px;">Save 25%</span>
+      </div>
+      <h3 style="font-size:20px;margin:8px 0 4px;">Data asset + research support</h3>
+      <p style="font-size:13px;opacity:0.7;margin-bottom:18px;">Get the full dataset, plus our research support.</p>
       <ul style="list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13px;">
-        <li>· 专业版全部功能</li>
-        <li>· <strong>完整历史数据集</strong>访问权限（3年以上）</li>
-        <li>· 定制市场与关键词研究
+        <li>· Everything in Professional</li>
+        <li>· <strong>Full historical dataset</strong> access (3+ years)</li>
+        <li>· Custom market and keyword research
           <span class="ei-tip" tabindex="0" style="vertical-align:middle;">
             <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--color-accent-100);color:var(--color-accent-700);font-size:10px;font-weight:700;cursor:help;">?</span>
-            <span class="ei-tip-bubble">示例：查找某关键词下排名前30的插件；分析竞品标题、描述与元数据；导出插件所有可用语言版本；多插件同类对比；生成自定义 CSV / Excel 研究报告。</span>
+            <span class="ei-tip-bubble">Examples: find the top 30 extensions ranking for a given keyword; analyze competitor titles, descriptions, and metadata; export an extension's full set of available language versions; compare multiple similar extensions; generate a custom CSV / Excel research report.</span>
           </span>
         </li>
-        <li>· Chrome Web Store 关键词排名研究</li>
-        <li>· 竞争对手与本地化研究</li>
-        <li>· 自定义 CSV / Excel 报告</li>
+        <li>· Chrome Web Store keyword ranking research</li>
+        <li>· Competitor and localization research</li>
+        <li>· Custom CSV / Excel reports</li>
       </ul>
-      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">适合 Agency、Portfolio 运营者与需要数据+研究支持的团队。</p>
+      <p style="font-size:12px;opacity:0.6;margin-bottom:16px;">Good for agencies, portfolio operators, and teams that need both data and research support.</p>
       {% if current_plan == "custom" %}
-        <button class="btn btn-secondary btn-block" style="margin-top:auto;" disabled>当前方案</button>
+        <button class="btn btn-secondary btn-block" style="margin-top:auto;" disabled>Current plan</button>
       {% else %}
         <form method="post" action="{% url 'intelligence:billing_checkout' plan='custom' %}" style="margin-top:auto;"
               onsubmit="if(window.posthog){posthog.capture('checkout_started',{plan:'custom'});}">
           {% csrf_token %}
-          <button type="submit" class="btn btn-primary btn-block">升级到定制情报版</button>
+          <button type="submit" class="btn btn-primary btn-block">Upgrade to Custom Intelligence</button>
         </form>
       {% endif %}
     </div>
   </section>
 
   <section style="padding-top:40px;padding-bottom:60px;">
-    <h3 style="font-size:18px;margin-bottom:16px;">方案对比</h3>
+    <h3 style="font-size:18px;margin-bottom:16px;">Plan comparison</h3>
     <table class="table" style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
-      <thead><tr><th>能力</th><th>免费版</th><th>专业版 $499</th><th>定制情报版 $1,499</th></tr></thead>
+      <thead><tr><th>Capability</th><th>Free</th><th>Professional $499</th><th>Custom Intelligence $1,499</th></tr></thead>
       <tbody>
-        <tr><td>搜索与基础信息</td><td>已包含</td><td>已包含</td><td>已包含</td></tr>
-        <tr><td>排行榜与机会信号</td><td>有限预览</td><td>完整访问</td><td>完整访问</td></tr>
-        <tr><td>市场探索筛选</td><td>基础筛选</td><td>高级筛选</td><td>高级筛选</td></tr>
-        <tr><td>插件历史分析</td><td>30 天</td><td>完整历史</td><td>完整历史</td></tr>
-        <tr><td style="font-weight:700;">Chrome Extension 数据集</td><td>示例数据（50行）</td><td style="font-weight:700;color:var(--color-accent-700);">1年内 · 完整访问 + 导出</td><td style="font-weight:700;color:var(--color-accent-700);">3年以上 · 完整访问 + 导出</td></tr>
-        <tr><td style="font-weight:700;">定制研究支持</td><td>—</td><td>—</td><td style="font-weight:700;color:var(--color-accent-700);">已包含</td></tr>
-        <tr><td>关键词 / 竞品研究</td><td>—</td><td>—</td><td>已包含</td></tr>
+        <tr><td>Search and basic info</td><td>Included</td><td>Included</td><td>Included</td></tr>
+        <tr><td>Rankings and opportunity signals</td><td>Limited preview</td><td>Full access</td><td>Full access</td></tr>
+        <tr><td>Market Explorer filters</td><td>Basic filters</td><td>Advanced filters</td><td>Advanced filters</td></tr>
+        <tr><td>Extension history analysis</td><td>30 days</td><td>Full history</td><td>Full history</td></tr>
+        <tr><td style="font-weight:700;">Chrome Extension Dataset</td><td>Sample data (50 rows)</td><td style="font-weight:700;color:var(--color-accent-700);">1-year · full access + export</td><td style="font-weight:700;color:var(--color-accent-700);">3+ years · full access + export</td></tr>
+        <tr><td style="font-weight:700;">Custom research support</td><td>—</td><td>—</td><td style="font-weight:700;color:var(--color-accent-700);">Included</td></tr>
+        <tr><td>Keyword / competitor research</td><td>—</td><td>—</td><td>Included</td></tr>
       </tbody>
     </table>
-    <p style="font-size:12px;opacity:0.55;margin-top:12px;">Chrome Extension 数据集统一为70字段（不分套餐字段多少，区别只在历史日期范围）；Custom 的"3年以上"以实际已回补完成的历史数据为准。</p>
+    <p style="font-size:12px;opacity:0.55;margin-top:12px;">The Chrome Extension Dataset always has the same 70-field schema regardless of plan — the only difference is the historical date range. Custom's "3+ years" reflects however much history has actually been backfilled so far.</p>
   </section>
 </main>
 {% endblock %}

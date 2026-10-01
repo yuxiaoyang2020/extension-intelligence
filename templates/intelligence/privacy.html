@@ -7,62 +7,62 @@
 {% block content %}
 <main style="max-width:760px;margin:0 auto;padding:0 32px 80px;">
   <section style="padding-top:48px;">
-    <div class="card-kicker" style="margin-bottom:10px;">法律信息</div>
-    <h1 style="font-size:28px;margin-bottom:8px;">隐私政策</h1>
-    <p style="font-size:13px;opacity:0.6;margin-bottom:32px;">最后更新：2026年9月29日</p>
+    <div class="card-kicker" style="margin-bottom:10px;">Legal</div>
+    <h1 style="font-size:28px;margin-bottom:8px;">Privacy Policy</h1>
+    <p style="font-size:13px;opacity:0.6;margin-bottom:32px;">Last updated: September 29, 2026</p>
 
     <div style="background:var(--color-card);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:32px;font-size:13px;">
-      <strong>⚠️ 上线前必须完成：</strong>本页面下方标记【待填写】的地方需要替换成你的真实法律实体信息（公司名称/注册地址/管辖法律）。这份文档描述的是产品当前真实的数据处理方式，但整体建议找律师过一遍再正式上线——这不是律师审核过的法律文本，只是准确反映代码行为的草稿。
+      <strong>⚠️ Must be completed before launch:</strong> The [TO BE FILLED IN] placeholders below need to be replaced with your real legal entity information (company name / registered address / governing law). This document describes how the product actually handles data today, but you should have a lawyer review it before going live — this is not a lawyer-reviewed legal text, just a draft that accurately reflects the code's actual behavior.
     </div>
 
     <div style="font-size:14px;line-height:1.8;">
-      <h2 style="font-size:18px;margin-top:28px;">运营者</h2>
-      <p>本网站（Extension Intelligence）由【待填写：法律实体全称，例如"XX科技有限公司"或"XX Inc."】（以下简称"我们"）运营，注册地址为【待填写】。如对本政策有任何疑问，请通过 <a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a> 联系我们。</p>
+      <h2 style="font-size:18px;margin-top:28px;">Operator</h2>
+      <p>This website (Extension Intelligence) is operated by [TO BE FILLED IN: full legal entity name, e.g. "XX Technology Co., Ltd." or "XX Inc."] ("we," "us"), registered at [TO BE FILLED IN]. If you have any questions about this policy, contact us at <a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a>.</p>
 
-      <h2 style="font-size:18px;margin-top:28px;">我们收集哪些信息</h2>
-      <p>我们只收集提供服务实际需要的信息，不收集用不到的数据：</p>
+      <h2 style="font-size:18px;margin-top:28px;">What information we collect</h2>
+      <p>We only collect information actually needed to provide the service — we don't collect data we have no use for:</p>
       <ul style="padding-left:20px;">
-        <li><strong>账户信息</strong>：注册时你提供的邮箱地址和密码（密码经过加密存储，我们自己也看不到明文）。如果你选择用Google账号登录，我们会从Google获取你的邮箱、姓名和头像，用于创建/关联账户。</li>
-        <li><strong>订阅与支付信息</strong>：升级付费方案时，支付信息（银行卡号等）由 Stripe 直接处理，我们不会接触或存储你的完整银行卡信息。我们这边只保存Stripe返回的客户ID、订阅ID、订阅方案和订阅周期日期，用于判断你的账户权限。</li>
-        <li><strong>使用数据</strong>：你在网站上的操作记录（比如搜索、筛选条件），目前只用于当次请求处理，不做用户行为分析或第三方追踪——我们现在没有接入Google Analytics/PostHog等分析工具；如果以后接入，会更新这部分说明并提前告知。</li>
-        <li><strong>定制研究需求</strong>：如果你是Custom Intelligence套餐用户并提交了定制研究需求表单，我们会保存你填写的标题、描述、期望输出格式，以及你上传的附件文件。</li>
-        <li><strong>Cookie</strong>：我们只使用维持你登录状态和防止跨站请求伪造攻击（CSRF）必需的会话Cookie，不使用第三方广告/追踪Cookie。</li>
+        <li><strong>Account information</strong>: the email address and password you provide when signing up (passwords are stored encrypted — we can't see the plaintext either). If you sign in with a Google account, we obtain your email, name, and avatar from Google to create or link your account.</li>
+        <li><strong>Subscription and payment information</strong>: when you upgrade to a paid plan, payment information (card numbers, etc.) is processed directly by Stripe — we never see or store your full card details. We only store the customer ID, subscription ID, plan, and billing period dates that Stripe returns, to determine your account's access level.</li>
+        <li><strong>Usage data</strong>: your actions on the site (such as searches and filter selections) are currently only used to process that specific request — we don't do behavioral analytics or third-party tracking. We currently have no analytics tools like Google Analytics or PostHog integrated; if we add one in the future, we'll update this section and notify you in advance.</li>
+        <li><strong>Custom research requests</strong>: if you're a Custom Intelligence plan customer and submit a custom research request form, we store the title, description, and desired output format you provide, along with any files you upload.</li>
+        <li><strong>Cookies</strong>: we only use session cookies necessary to keep you logged in and to prevent cross-site request forgery (CSRF) attacks — we don't use third-party advertising or tracking cookies.</li>
       </ul>
 
-      <h2 style="font-size:18px;margin-top:28px;">我们如何使用这些信息</h2>
+      <h2 style="font-size:18px;margin-top:28px;">How we use this information</h2>
       <ul style="padding-left:20px;">
-        <li>提供、维护和改进本服务（比如根据你的方案判断能看到多少数据）</li>
-        <li>处理订阅和账单（通过Stripe）</li>
-        <li>响应你的客服咨询和定制研究需求</li>
-        <li>向你发送与账户/订阅直接相关的通知（比如订阅状态变化）——我们不会未经同意发送营销邮件</li>
+        <li>To provide, maintain, and improve the service (for example, determining how much data you can see based on your plan)</li>
+        <li>To process subscriptions and billing (via Stripe)</li>
+        <li>To respond to your support inquiries and custom research requests</li>
+        <li>To send you notifications directly related to your account/subscription (such as subscription status changes) — we will not send marketing emails without your consent</li>
       </ul>
 
-      <h2 style="font-size:18px;margin-top:28px;">我们分享哪些信息、分享给谁</h2>
-      <p>我们不会把你的个人信息出售给第三方。为了运营服务，我们会与以下服务商共享必要的最小信息：</p>
+      <h2 style="font-size:18px;margin-top:28px;">What we share, and with whom</h2>
+      <p>We do not sell your personal information to third parties. To operate the service, we share the minimum necessary information with the following service providers:</p>
       <ul style="padding-left:20px;">
-        <li><strong>Stripe</strong>（支付处理）——处理你的订阅和付款</li>
-        <li><strong>Google</strong>（如果你选择Google登录）——身份验证</li>
-        <li><strong>阿里云</strong>（云服务器与对象存储OSS）——托管网站和数据文件</li>
+        <li><strong>Stripe</strong> (payment processing) — handles your subscriptions and payments</li>
+        <li><strong>Google</strong> (if you choose Google sign-in) — identity verification</li>
+        <li><strong>Alibaba Cloud</strong> (cloud servers and OSS object storage) — hosts the website and data files</li>
       </ul>
-      <p>如遇法律要求（比如法院传票），我们可能需要披露信息，但会在法律允许的范围内尽量提前告知你。</p>
+      <p>If legally required (for example, by a court order), we may need to disclose information, but we will attempt to notify you in advance where legally permitted.</p>
 
-      <h2 style="font-size:18px;margin-top:28px;">Chrome Extension 数据集本身</h2>
-      <p>我们对外销售的Chrome Extension市场数据集（Customer Dataset），采集的是Chrome网上应用店公开可见的插件信息（名称、开发者、用户量、评分等），不包含任何终端用户的个人信息——这份数据集跟"我们收集你的个人信息"是两回事，请不要混淆。</p>
+      <h2 style="font-size:18px;margin-top:28px;">The Chrome Extension dataset itself</h2>
+      <p>The Chrome Extension market dataset we sell (the Customer Dataset) is collected from publicly visible Chrome Web Store extension information (name, developer, user count, rating, etc.) and does not contain any end-user personal information — this dataset is a separate matter from "information we collect about you," and the two should not be confused.</p>
 
-      <h2 style="font-size:18px;margin-top:28px;">数据保留</h2>
-      <p>只要你的账户处于活跃状态，我们会保留上述信息。你可以随时通过邮件联系我们要求删除账户和相关数据（定制研究需求的附件、订阅历史记录等），法律要求保留的部分除外（例如与已完成交易相关的账单记录）。</p>
+      <h2 style="font-size:18px;margin-top:28px;">Data retention</h2>
+      <p>We retain the information above for as long as your account is active. You can contact us by email at any time to request deletion of your account and related data (custom research request attachments, subscription history, etc.), except where retention is legally required (for example, billing records tied to completed transactions).</p>
 
-      <h2 style="font-size:18px;margin-top:28px;">你的权利</h2>
-      <p>你可以联系 <a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a> 行使以下权利：查看我们持有你的哪些信息、要求更正错误信息、要求删除你的账户和数据、撤回同意。目前这些请求由人工处理，我们还没有做成自助操作页面。</p>
+      <h2 style="font-size:18px;margin-top:28px;">Your rights</h2>
+      <p>You can contact <a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a> to exercise the following rights: see what information we hold about you, request correction of inaccurate information, request deletion of your account and data, and withdraw consent. These requests are currently handled manually — we don't yet have a self-service page for them.</p>
 
-      <h2 style="font-size:18px;margin-top:28px;">未成年人</h2>
-      <p>本服务面向企业和专业研究用途，不面向13岁以下（或你所在地区法律定义的未成年人年龄线）人群，我们不会明知故犯地收集未成年人的个人信息。</p>
+      <h2 style="font-size:18px;margin-top:28px;">Children</h2>
+      <p>This service is intended for business and professional research use, and is not directed at anyone under 13 (or the applicable age of majority defined by law in your region). We do not knowingly collect personal information from children.</p>
 
-      <h2 style="font-size:18px;margin-top:28px;">政策变更</h2>
-      <p>如果我们修改本政策，会更新本页面顶部的"最后更新"日期；重大变更会通过邮件另行通知已注册用户。</p>
+      <h2 style="font-size:18px;margin-top:28px;">Changes to this policy</h2>
+      <p>If we make changes to this policy, we'll update the "Last updated" date at the top of this page. Material changes will be communicated separately to registered users by email.</p>
 
-      <h2 style="font-size:18px;margin-top:28px;">联系我们</h2>
-      <p>如对本隐私政策有任何疑问，请发邮件至 <a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a>。</p>
+      <h2 style="font-size:18px;margin-top:28px;">Contact us</h2>
+      <p>If you have any questions about this privacy policy, email <a href="mailto:contact@extension-center.com" class="ei-link">contact@extension-center.com</a>.</p>
     </div>
   </section>
 </main>

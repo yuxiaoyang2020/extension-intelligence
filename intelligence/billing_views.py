@@ -41,9 +41,9 @@ def _period_dates(subscription: dict):
 @require_POST
 def create_checkout(request, plan):
     if plan not in billing.PLAN_TO_PRICE:
-        return HttpResponseBadRequest("未知方案")
+        return HttpResponseBadRequest("Unknown plan")
     if not billing.PLAN_TO_PRICE[plan]:
-        return HttpResponseBadRequest(f"{plan} 对应的 Stripe Price ID 还没配置")
+        return HttpResponseBadRequest(f"No Stripe Price ID configured for {plan}")
 
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
     success_url = request.build_absolute_uri("/account/?checkout=success")
@@ -73,7 +73,7 @@ def stripe_webhook(request):
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, settings.STRIPE_WEBHOOK_SECRET)
     except (ValueError, stripe.error.SignatureVerificationError):
-        return HttpResponseBadRequest("签名验证失败")
+        return HttpResponseBadRequest("Signature verification failed")
 
     event_type = event["type"]
     # 新版 stripe SDK 返回的是 StripeObject（Session/Subscription等类型），

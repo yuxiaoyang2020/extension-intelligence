@@ -1,5 +1,5 @@
 {% load static %}<!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -78,24 +78,24 @@
     <span style="width:28px;height:28px;background:var(--color-text);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:14px;flex:none;border-radius:var(--radius-sm);">E</span>
     <span class="nav-brand" style="margin-right:0;color:var(--color-text);">Extension Intelligence</span>
   </a>
-  <a href="{% url 'intelligence:home' %}" class="ei-link" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>发现</a>
-  <a href="{% url 'intelligence:dataset' %}" class="ei-link" {% if request.resolver_match.url_name == 'dataset' %}aria-current="page"{% endif %}>数据集</a>
-  <a href="{% url 'intelligence:rankings' %}" class="ei-link" {% if request.resolver_match.url_name == 'rankings' %}aria-current="page"{% endif %}>排行榜</a>
-  <a href="{% url 'intelligence:explorer' %}" class="ei-link" {% if request.resolver_match.url_name == 'explorer' %}aria-current="page"{% endif %}>市场探索</a>
+  <a href="{% url 'intelligence:home' %}" class="ei-link" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>Discover</a>
+  <a href="{% url 'intelligence:dataset' %}" class="ei-link" {% if request.resolver_match.url_name == 'dataset' %}aria-current="page"{% endif %}>Dataset</a>
+  <a href="{% url 'intelligence:rankings' %}" class="ei-link" {% if request.resolver_match.url_name == 'rankings' %}aria-current="page"{% endif %}>Rankings</a>
+  <a href="{% url 'intelligence:explorer' %}" class="ei-link" {% if request.resolver_match.url_name == 'explorer' %}aria-current="page"{% endif %}>Market Explorer</a>
   <div style="display:flex;align-items:center;gap:20px;">
-    <a href="{% url 'intelligence:pricing' %}" class="ei-link" style="font-size:14px;" {% if request.resolver_match.url_name == 'pricing' %}aria-current="page"{% endif %}>定价</a>
+    <a href="{% url 'intelligence:pricing' %}" class="ei-link" style="font-size:14px;" {% if request.resolver_match.url_name == 'pricing' %}aria-current="page"{% endif %}>Pricing</a>
     {% if user.is_authenticated %}
       {% if user.is_staff %}
-        <a href="{% url 'intelligence:staff_dashboard' %}" class="ei-link" style="font-size:14px;" {% if request.resolver_match.url_name == 'staff_dashboard' %}aria-current="page"{% endif %}>内部管理</a>
+        <a href="{% url 'intelligence:staff_dashboard' %}" class="ei-link" style="font-size:14px;" {% if request.resolver_match.url_name == 'staff_dashboard' %}aria-current="page"{% endif %}>Internal</a>
       {% endif %}
       <a href="{% url 'intelligence:account' %}" class="ei-link" style="font-size:14px;" {% if request.resolver_match.url_name == 'account' %}aria-current="page"{% endif %}>{{ user.email|default:user.username }}</a>
       <form method="post" action="{% url 'intelligence:logout' %}" style="display:inline;margin:0;">
         {% csrf_token %}
-        <button type="submit" style="background:none;border:none;padding:0;color:inherit;font-size:14px;cursor:pointer;font-family:inherit;">退出</button>
+        <button type="submit" style="background:none;border:none;padding:0;color:inherit;font-size:14px;cursor:pointer;font-family:inherit;">Log out</button>
       </form>
     {% else %}
-      <a href="{% url 'intelligence:login' %}" style="text-decoration:none;color:inherit;font-size:14px;">登录</a>
-      <a href="{% url 'intelligence:register' %}" class="btn btn-primary">注册</a>
+      <a href="{% url 'intelligence:login' %}" style="text-decoration:none;color:inherit;font-size:14px;">Log in</a>
+      <a href="{% url 'intelligence:register' %}" class="btn btn-primary">Sign up</a>
     {% endif %}
   </div>
 </nav>
@@ -105,9 +105,9 @@
 <footer style="border-top:1px solid var(--color-divider);margin-top:60px;padding:28px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;opacity:0.7;">
   <span>&copy; {% now "Y" %} Extension Intelligence</span>
   <div style="display:flex;gap:20px;">
-    <a href="{% url 'intelligence:privacy' %}" class="ei-link">隐私政策</a>
-    <a href="{% url 'intelligence:terms' %}" class="ei-link">服务条款</a>
-    <a href="mailto:contact@extension-center.com" class="ei-link">联系客服</a>
+    <a href="{% url 'intelligence:privacy' %}" class="ei-link">Privacy Policy</a>
+    <a href="{% url 'intelligence:terms' %}" class="ei-link">Terms of Service</a>
+    <a href="mailto:contact@extension-center.com" class="ei-link">Contact support (contact@extension-center.com)</a>
   </div>
 </footer>
 

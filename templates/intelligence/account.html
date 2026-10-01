@@ -15,8 +15,8 @@
 {% block content %}
 <main style="max-width:900px;margin:0 auto;padding:0 32px 80px;">
   <section style="padding-top:48px;margin-bottom:24px;">
-    <div class="card-kicker" style="margin-bottom:8px;">账户</div>
-    <h1 style="font-size:28px;">账户设置</h1>
+    <div class="card-kicker" style="margin-bottom:8px;">Account</div>
+    <h1 style="font-size:28px;">Account Settings</h1>
   </section>
 
   {% if messages %}
@@ -32,32 +32,35 @@
   <section style="background:var(--color-card);padding:24px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);margin-bottom:14px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:14px;">
       <div>
-        <div style="font-size:12px;opacity:0.6;margin-bottom:6px;">当前套餐</div>
+        <div style="font-size:12px;opacity:0.6;margin-bottom:6px;">Current plan</div>
         <div style="font-size:22px;font-weight:800;font-family:var(--font-heading);">{{ plan_label }}</div>
       </div>
-      <a href="{% url 'intelligence:pricing' %}" class="btn btn-secondary">查看所有方案 →</a>
+      <a href="{% url 'intelligence:pricing' %}" class="btn btn-secondary">View all plans →</a>
     </div>
 
     <div style="font-size:14px;">
       {% if profile.plan == "free" %}
-        免费版
+        Free plan
       {% elif profile.cancel_at_period_end %}
-        已取消自动续费，服务持续到期
+        Auto-renewal canceled — service continues until the end of the current period
       {% else %}
-        订阅中
+        Subscribed
       {% endif %}
     </div>
 
-    {% if profile.stripe_customer_id %}
+    {% if profile.plan != "free" %}
       <!-- 更新付款方式/取消订阅/任何账单问题统一走人工客服——故意不放
            Stripe Billing Portal 的自助入口，避免用户自己就能把订阅取消掉，
-           绕开"方案A"想要的人工介入这一环。 -->
-      <div style="font-size:12px;opacity:0.55;margin-top:14px;">需要更新付款方式、取消订阅或遇到问题？<a href="mailto:contact@extension-center.com" class="ei-link" style="text-decoration:underline;">联系客服</a></div>
+           绕开"方案A"想要的人工介入这一环。判断条件用plan而不是
+           stripe_customer_id（2026-09-30修复）：Custom套餐以后可能是线下
+           谈的、后台手动开通，不一定有stripe_customer_id，但一样是付费
+           用户，一样需要能找到客服入口。 -->
+      <div style="font-size:12px;opacity:0.55;margin-top:14px;">Need to update your payment method, cancel your subscription, or run into an issue? <a href="mailto:contact@extension-center.com" class="ei-link" style="text-decoration:underline;">Contact support</a> (contact@extension-center.com)</div>
     {% endif %}
   </section>
 
   <section style="background:var(--color-card);padding:24px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);margin-bottom:14px;">
-    <div style="font-size:12px;opacity:0.6;margin-bottom:12px;">套餐包含</div>
+    <div style="font-size:12px;opacity:0.6;margin-bottom:12px;">Plan includes</div>
     <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px;">
       {% for feature in plan_features %}
       <li>· {{ feature }}</li>
@@ -66,23 +69,23 @@
   </section>
 
   <section style="background:var(--color-card);padding:20px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);margin-bottom:24px;">
-    <div style="font-size:12px;opacity:0.6;margin-bottom:6px;">数据下载权限</div>
+    <div style="font-size:12px;opacity:0.6;margin-bottom:6px;">Data download access</div>
     <div style="font-size:14px;margin-bottom:10px;">{{ download_text }}</div>
-    <a href="{% url 'intelligence:dataset' %}" class="btn btn-secondary">前往 Dataset 页面下载 →</a>
+    <a href="{% url 'intelligence:dataset' %}" class="btn btn-secondary">Go to Dataset page →</a>
   </section>
 
   {% if research_form %}
   <section style="background:var(--color-card);padding:20px;border:1px solid var(--color-divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px;">
       <div>
-        <div class="card-kicker" style="margin-bottom:6px;">定制情报版</div>
-        <div style="font-size:15px;font-weight:700;">提交定制研究需求</div>
+        <div class="card-kicker" style="margin-bottom:6px;">Custom Intelligence</div>
+        <div style="font-size:15px;font-weight:700;">Submit a custom research request</div>
       </div>
     </div>
     <form method="post" enctype="multipart/form-data" class="ei-form">
       {% csrf_token %}
       {{ research_form.as_p }}
-      <button type="submit" class="btn btn-primary">提交需求</button>
+      <button type="submit" class="btn btn-primary">Submit request</button>
     </form>
   </section>
   {% endif %}

@@ -230,6 +230,17 @@ textarea.input { min-height: 90px; resize: vertical; }
   padding: var(--space-2);
   border-bottom: 1px solid var(--color-divider);
 }
+/* 2026-09-30修复真实bug（不是翻译问题）：`.table th`（选择器优先级0,1,1）
+   比单独的`.ei-num`类（优先级0,1,0）优先级更高，导致所有数字列的表头
+   `<th class="ei-num">`被`.table th`的text-align:left覆盖掉，表头永远
+   左对齐，但对应的数据单元格`<td class="ei-num">`是右对齐的（.table td
+   没有设text-align，.ei-num的右对齐规则不受影响）——这就是插件详情页
+   表头和数字看起来"跑偏"对不齐的真正原因：不是列顺序错了，是每一列表头
+   文字和它下面的数字实际对齐方式不一样。这条规则专门针对`th.ei-num`
+   （优先级0,2,1），确保数字列的表头也右对齐，跟数据对齐。全站所有带
+   ei-num表头的表格（Home/Rankings/Explorer/Dataset/Extension Detail等）
+   都受益于这个修复，不是只修了插件详情页这一处。 */
+.table th.ei-num { text-align: right; }
 .table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
 
 /* — dialog — */
