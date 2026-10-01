@@ -80,6 +80,15 @@ def _load_descriptions(stdout, date_str: str) -> dict:
     except FileNotFoundError as exc:
         stdout.write(f"  [警告] 读取{date_str}的description失败，本次同步该字段全部留空: {exc}")
         return {}
+    # 2026-09-30修复真正的根因（之前长期误判成rating_value的问题，其实
+    # 一直是这里）：pandas读CSV时，就算指定了dtype=str，遇到空单元格依然
+    # 会给出一个NaN（float类型），不是空字符串或None——这是dtype=str和
+    # pandas缺失值处理各管一段导致的经典坑。下游`descriptions.get(id) or
+    # ""`这个兜底会因此失效：NaN在Python里是"真值"（不是0，不算falsy），
+    # `nan or ""`短路直接返回nan本身，根本轮不到""生效，NaN就这样被
+    # 传进了不允许NULL的description列。在这里用fillna("")在源头堵掉，
+    # 不依赖下游的or兜底。
+    df["description"] = df["description"].fillna("")
     return dict(zip(df["id"], df["description"]))
 
 # _raw_bulk_upsert 挪到了 sync_helpers.py（2026-09-28），因为新增的

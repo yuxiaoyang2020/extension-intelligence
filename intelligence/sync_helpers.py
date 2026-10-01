@@ -19,7 +19,19 @@ def _to_int(value):
 
 
 def _to_float(value):
-    return None if pd.isna(value) else float(value)
+    """2026-09-30修复：原始数据里偶尔会出现字符串"nan"这种文本形式的缺失值
+    标记（不是真正的浮点NaN/None），pd.isna()识别不出字符串"nan"是缺失值
+    （它只认识真正的NaN/None/NaT这些），于是继续走到float(value)——而
+    Python的float("nan")会"成功"转成一个真正的NaN浮点数，这个NaN混过了
+    检查一路传到MySQL那一层，PyMySQL的escape_float()才终于报错拒绝写入
+    （2026-09-30 Windows真实数据触发，Mac那批数据没有这行边界情况）。
+    加一步转换后校验：float("nan")转出来的结果用`result != result`
+    （NaN是唯一一个"不等于自己"的浮点数，比额外import math.isnan更简洁）
+    再拦一次，双重保险。"""
+    if pd.isna(value):
+        return None
+    result = float(value)
+    return None if result != result else result
 
 
 def _to_date(value):
@@ -55,6 +67,23 @@ def _truncate(model, field_name, value):
     return value[:max_length] if max_length and len(value) > max_length else value
 
 
+def _sanitize_for_mysql(value):
+    """最后一道防线——不管NaN是从哪个上游字段/哪种奇怪的原始数据格式漏进来
+    的（2026-09-30已经在_to_float()里堵过一次字符串"nan"这个来源，但
+    Windows真实数据上同样的报错还在复现，说明还有别的漏网来源，一时半会
+    排查不出具体是谁），统一在真正拼SQL之前这个唯一的关卡上兜底转成
+    None——是float且不等于自身（NaN的定义性特征）就转None，其它值原样
+    传过去。这样不用穷举每一个可能产生NaN的上游字段，只要最终传到这里的
+    是NaN，都会被拦下来，从根上保证不会有NaN传到MySQL导致整批全部失败。
+    调试用：拦下来的时候打印一下原始值，方便回头定位到底是哪来的。
+    """
+    if isinstance(value, float) and value != value:
+        import sys
+        print(f"  [调试] 拦截到一个NaN值，已转成NULL（不会中断同步）", file=sys.stderr)
+        return None
+    return value
+
+
 def _raw_bulk_upsert(model, objs, field_names):
     """
     用 MySQL 原生的 INSERT ... ON DUPLICATE KEY UPDATE 一次性处理一整批的
@@ -78,7 +107,7 @@ def _raw_bulk_upsert(model, objs, field_names):
     update_clause = ", ".join(f"`{c}`=VALUES(`{c}`)" for c in columns[1:])
     sql = f"INSERT INTO `{table}` ({col_list}) VALUES ({placeholders}) ON DUPLICATE KEY UPDATE {update_clause}"
 
-    rows = [tuple(getattr(obj, a) for a in attnames) for obj in objs]
+    rows = [tuple(_sanitize_for_mysql(getattr(obj, a)) for a in attnames) for obj in objs]
     with connection.cursor() as cursor:
         cursor.executemany(sql, rows)
 
@@ -123,7 +152,7 @@ def _raw_bulk_update(model, objs, field_names):
     sql = f"UPDATE `{table}` SET {set_clause} WHERE `{pk_column}`=%s"
 
     rows = [
-        tuple(getattr(obj, a) for a in update_attnames) + (getattr(obj, pk_attname),)
+        tuple(_sanitize_for_mysql(getattr(obj, a)) for a in update_attnames) + (getattr(obj, pk_attname),)
         for obj in objs
     ]
     with connection.cursor() as cursor:
