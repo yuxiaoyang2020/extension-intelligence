@@ -24,6 +24,7 @@ upload_customer_dataset —— 把本地已经生成好的 Customer Dataset CSV
 """
 from __future__ import annotations
 
+import time
 from pathlib import Path
 
 from django.conf import settings
@@ -32,6 +33,11 @@ from django.core.management.base import BaseCommand, CommandError
 import oss2
 
 from intelligence.oss_client import get_oss_bucket
+
+# 新加坡OSS偶尔会有网络抖动（SSL连接被中断），单个文件最多自动重试这么
+# 多次，重试间隔按指数退避（5/10/20/40秒）。
+MAX_UPLOAD_RETRIES = 5
+UPLOAD_RETRY_BACKOFF_SECONDS = 5
 
 
 class Command(BaseCommand):
@@ -66,7 +72,7 @@ class Command(BaseCommand):
         prefix = settings.OSS_CUSTOMER_DATASET_PREFIX.rstrip("/")
 
         total = len(files)
-        uploaded, skipped = 0, 0
+        uploaded, skipped, failed = 0, 0, []
 
         for i, path in enumerate(files, start=1):
             if not path.exists():
@@ -88,17 +94,46 @@ class Command(BaseCommand):
                 pct = consumed_bytes / total_bytes * 100 if total_bytes else 0
                 self.stdout.write(f"  上传中 {_key}: {pct:.0f}% ({consumed_bytes // 1024 // 1024}MB/{total_bytes // 1024 // 1024}MB)", ending="\r")
 
-            oss2.resumable_upload(
-                bucket, key, str(path),
-                num_threads=4,
-                progress_callback=_progress,
-            )
+            # resumable_upload本身自带断点续传（分片+本地checkpoint），
+            # 这里重试时不会从头重新传整个文件，只会接上次断掉的分片继续。
+            success, last_exc = False, None
+            for attempt in range(1, MAX_UPLOAD_RETRIES + 1):
+                try:
+                    oss2.resumable_upload(
+                        bucket, key, str(path),
+                        num_threads=4,
+                        progress_callback=_progress,
+                    )
+                    success = True
+                    break
+                except (oss2.exceptions.RequestError, oss2.exceptions.ServerError) as exc:
+                    last_exc = exc
+                    self.stdout.write("")
+                    if attempt < MAX_UPLOAD_RETRIES:
+                        wait = UPLOAD_RETRY_BACKOFF_SECONDS * (2 ** (attempt - 1))
+                        self.stdout.write(self.style.WARNING(
+                            f"[{i}/{total}] 网络中断（第{attempt}/{MAX_UPLOAD_RETRIES}次尝试），{wait}秒后自动重试: {key}"
+                        ))
+                        time.sleep(wait)
+
             self.stdout.write("")  # 换行，盖掉上面 \r 的进度行
+
+            if not success:
+                self.stdout.write(self.style.ERROR(
+                    f"[{i}/{total}] 上传失败（已自动重试{MAX_UPLOAD_RETRIES}次仍失败，跳过继续下一个）: {key} —— {last_exc}"
+                ))
+                failed.append(key)
+                continue
+
             self.stdout.write(self.style.SUCCESS(
                 f"[{i}/{total}] 已上传: {key} ({local_size / 1024 / 1024:.1f} MB)"
             ))
             uploaded += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f"完成：上传 {uploaded} 个，跳过 {skipped} 个（已存在），共 {total} 个文件。"
+            f"完成：上传 {uploaded} 个，跳过 {skipped} 个（已存在），失败 {len(failed)} 个，共 {total} 个文件。"
         ))
+        if failed:
+            self.stdout.write(self.style.ERROR("以下文件重试耗尽后仍失败，再跑一次 --all 会自动只重传这些（其它已成功的会被跳过）："))
+            for key in failed:
+                self.stdout.write(f"  - {key}")
