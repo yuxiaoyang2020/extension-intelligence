@@ -7,17 +7,17 @@
 {% block content %}
 <main style="max-width:1180px;margin:0 auto;padding:0 32px 80px;">
   <div style="padding-top:20px;font-size:12px;opacity:0.6;margin-bottom:16px;">
-    <a href="{% url 'intelligence:home' %}" class="ei-link">首页</a> / Productivity
+    <a href="{% url 'intelligence:home' %}" class="ei-link">Home</a> / Productivity
   </div>
 
   <section style="padding-top:8px;">
-    <div class="card-kicker" style="margin-bottom:10px;">分类目录</div>
+    <div class="card-kicker" style="margin-bottom:10px;">Category Directory</div>
     <h1 style="font-size:28px;margin-bottom:8px;">Productivity Chrome Extensions</h1>
     <p style="font-size:14px;opacity:0.7;margin-bottom:8px;">
-      当前共 {{ total_count }} 个已通过质量筛选的 Productivity 分类插件，按当前用户数排序，每日更新。
+      {{ total_count }} quality-filtered Productivity-category extensions, sorted by current user count, updated daily.
     </p>
     <p style="font-size:12px;opacity:0.55;margin-bottom:24px;">
-      也看看精选榜单：<a href="{% url 'intelligence:best_productivity' %}" class="ei-link">Best Productivity Chrome Extensions</a>
+      Also see the curated list: <a href="{% url 'intelligence:best_productivity' %}" class="ei-link">Best Productivity Chrome Extensions</a>
     </p>
   </section>
 
@@ -25,12 +25,12 @@
   <table class="table">
     <thead>
       <tr>
-        <th class="ei-col-sticky">插件</th>
-        <th class="ei-num">用户数</th>
-        <th class="ei-num">评分</th>
-        <th class="ei-num">评论数</th>
-        <th>发布者</th>
-        <th>最后更新</th>
+        <th class="ei-col-sticky">Extension</th>
+        <th class="ei-num">Users</th>
+        <th class="ei-num">Rating</th>
+        <th class="ei-num">Reviews</th>
+        <th>Publisher</th>
+        <th>Last Updated</th>
       </tr>
     </thead>
     <tbody>
@@ -49,7 +49,7 @@
         <td style="font-size:12px;opacity:0.65;">{{ ext.last_update|default:"—" }}</td>
       </tr>
     {% empty %}
-      <tr><td colspan="6" style="padding:16px;opacity:0.6;">暂无符合条件的插件</td></tr>
+      <tr><td colspan="6" style="padding:16px;opacity:0.6;">No extensions match yet</td></tr>
     {% endfor %}
     </tbody>
   </table>
@@ -57,9 +57,9 @@
 
   {% if page_obj.paginator.num_pages > 1 %}
   <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
-    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">上一页</a>{% else %}<button class="btn btn-secondary" disabled>上一页</button>{% endif %}
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Previous</a>{% else %}<button class="btn btn-secondary" disabled>Previous</button>{% endif %}
     <button class="btn btn-primary">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</button>
-    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">下一页</a>{% else %}<button class="btn btn-secondary" disabled>下一页</button>{% endif %}
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Next</a>{% else %}<button class="btn btn-secondary" disabled>Next</button>{% endif %}
   </div>
   {% endif %}
 </main>

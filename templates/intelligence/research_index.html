@@ -7,9 +7,9 @@
 <main style="max-width:760px;margin:0 auto;padding:0 32px 80px;">
   <section style="padding-top:48px;margin-bottom:24px;">
     <div class="card-kicker" style="margin-bottom:10px;">Research & Insights</div>
-    <h1 style="font-size:28px;margin-bottom:8px;">数据研究</h1>
-    <p style="font-size:14px;opacity:0.7;">基于我们采集到的真实Chrome Extension市场数据做的分析，不是批量生成的通用内容——
-    数量不多，但每一篇的数字都可以在我们自己的数据集里复现。</p>
+    <h1 style="font-size:28px;margin-bottom:8px;">Research</h1>
+    <p style="font-size:14px;opacity:0.7;">Analysis grounded in the real Chrome Extension market data we collect — not mass-generated generic content.
+    There isn't much of it yet, but every number in every article can be reproduced from our own dataset.</p>
   </section>
 
   <div style="display:flex;flex-direction:column;gap:16px;">
@@ -21,7 +21,7 @@
       <div style="font-size:13px;opacity:0.75;line-height:1.6;">{{ article.summary }}</div>
     </a>
     {% empty %}
-    <p style="opacity:0.6;">暂无内容。</p>
+    <p style="opacity:0.6;">No articles yet.</p>
     {% endfor %}
   </div>
 </main>

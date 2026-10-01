@@ -48,7 +48,7 @@ def create_checkout_session(user, profile, plan, success_url, cancel_url):
     """创建一次Stripe Checkout会话，返回session对象（调用方跳转到session.url）。"""
     price_id = PLAN_TO_PRICE.get(plan)
     if not price_id:
-        raise ValueError(f"未知方案或没配置对应的Price ID: {plan}")
+        raise ValueError(f"Unknown plan or no Price ID configured for it: {plan}")
 
     customer_id = get_or_create_customer(user, profile)
     return stripe.checkout.Session.create(

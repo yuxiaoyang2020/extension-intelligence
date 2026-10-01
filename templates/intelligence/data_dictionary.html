@@ -7,18 +7,18 @@
 <main style="max-width:960px;margin:0 auto;padding:0 32px 80px;">
   <section style="padding-top:48px;">
     <div class="card-kicker" style="margin-bottom:10px;">Data Dictionary</div>
-    <h1 style="font-size:28px;margin-bottom:8px;">Chrome Extension Dataset 字段说明</h1>
+    <h1 style="font-size:28px;margin-bottom:8px;">Chrome Extension Dataset Field Reference</h1>
     <p style="font-size:14px;opacity:0.7;margin-bottom:32px;">
-      完整数据集共 {{ total_field_count }} 个字段：{{ core_fields|length }} 个核心字段 +
-      {{ raw_fields|length }} 个产品资料字段 + {{ metric_fields|length }} 组增长指标 + snapshot_date。
-      这里列出的是原始字段清单，部分增长指标一行代表多个时间窗口的同名字段（比如
-      user_count_change_1d/7d/30d各是独立的一列）。
+      The full dataset has {{ total_field_count }} fields: {{ core_fields|length }} core fields +
+      {{ raw_fields|length }} product metadata fields + {{ metric_fields|length }} groups of growth metrics + snapshot_date.
+      This lists the raw field names — some growth metric rows represent the same field across multiple time windows (for example,
+      user_count_change_1d/7d/30d are each separate columns).
     </p>
 
-    <h2 style="font-size:18px;margin-bottom:12px;">核心字段（当前状态快照）</h2>
+    <h2 style="font-size:18px;margin-bottom:12px;">Core fields (current-state snapshot)</h2>
     <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:32px;box-shadow:var(--shadow-sm);">
       <table class="table" style="background:var(--color-card);">
-        <thead><tr><th>字段名</th><th>类型</th><th>说明</th></tr></thead>
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
         {% for name, dtype, desc in core_fields %}
           <tr><td style="font-family:monospace;font-size:12px;">{{ name }}</td><td>{{ dtype }}</td><td style="font-size:13px;opacity:0.8;">{{ desc }}</td></tr>
@@ -27,10 +27,10 @@
       </table>
     </div>
 
-    <h2 style="font-size:18px;margin-bottom:12px;">产品资料字段（来自原始商店页面）</h2>
+    <h2 style="font-size:18px;margin-bottom:12px;">Product metadata fields (from the raw store page)</h2>
     <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:32px;box-shadow:var(--shadow-sm);">
       <table class="table" style="background:var(--color-card);">
-        <thead><tr><th>字段名</th><th>类型</th><th>说明</th></tr></thead>
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
         {% for name, dtype, desc in raw_fields %}
           <tr><td style="font-family:monospace;font-size:12px;">{{ name }}</td><td>{{ dtype }}</td><td style="font-size:13px;opacity:0.8;">{{ desc }}</td></tr>
@@ -39,10 +39,10 @@
       </table>
     </div>
 
-    <h2 style="font-size:18px;margin-bottom:12px;">增长指标（时间序列衍生字段）</h2>
+    <h2 style="font-size:18px;margin-bottom:12px;">Growth metrics (time-series derived fields)</h2>
     <div style="border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:8px;box-shadow:var(--shadow-sm);">
       <table class="table" style="background:var(--color-card);">
-        <thead><tr><th>字段（含全部时间窗口）</th><th>类型</th><th>说明</th></tr></thead>
+        <thead><tr><th>Field (across all time windows)</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
         {% for name, dtype, desc in metric_fields %}
           <tr><td style="font-family:monospace;font-size:12px;">{{ name }}</td><td>{{ dtype }}</td><td style="font-size:13px;opacity:0.8;">{{ desc }}</td></tr>
@@ -50,12 +50,12 @@
         </tbody>
       </table>
     </div>
-    <p style="font-size:12px;opacity:0.55;margin-bottom:32px;">数值型字段在历史窗口不足以计算时为NULL，不会用0代替——具体计算方式见
-    <a href="{% url 'intelligence:methodology' %}" class="ei-link">方法论</a>页面。</p>
+    <p style="font-size:12px;opacity:0.55;margin-bottom:32px;">Numeric fields are NULL (not 0) when there isn't enough historical window to calculate them — see the
+    <a href="{% url 'intelligence:methodology' %}" class="ei-link">Methodology</a> page for exactly how each one is calculated.</p>
 
     <div style="border:1px solid var(--color-divider);background:var(--color-card);padding:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
-      <div style="font-size:14px;opacity:0.75;">想下载包含这70个字段的完整历史数据？</div>
-      <a href="{% url 'intelligence:dataset' %}" class="btn btn-primary">查看数据集 →</a>
+      <div style="font-size:14px;opacity:0.75;">Want to download the full historical dataset with all 70 fields?</div>
+      <a href="{% url 'intelligence:dataset' %}" class="btn btn-primary">View the dataset →</a>
     </div>
   </section>
 </main>

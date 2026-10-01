@@ -69,10 +69,10 @@ class Extension(models.Model):
     SEO_TIER_TIER1_GRACE = "tier1_grace"
     SEO_TIER_EXCLUDED = "excluded"
     SEO_TIER_CHOICES = [
-        (SEO_TIER_CANDIDATE, "候选（观察中）"),
-        (SEO_TIER_TIER1, "Tier 1（已索引）"),
-        (SEO_TIER_TIER1_GRACE, "Tier 1 宽限期（仍索引）"),
-        (SEO_TIER_EXCLUDED, "已排除（noindex）"),
+        (SEO_TIER_CANDIDATE, "Candidate (observing)"),
+        (SEO_TIER_TIER1, "Tier 1 (indexed)"),
+        (SEO_TIER_TIER1_GRACE, "Tier 1 grace period (still indexed)"),
+        (SEO_TIER_EXCLUDED, "Excluded (noindex)"),
     ]
     # SEO索引分层状态机，由 compute_seo_tier 命令每天更新，Detail页/sitemap
     # 只读这个字段，不在请求路径上现算——具体状态转换规则见该命令文件头注释。
@@ -202,8 +202,8 @@ class UserProfile(models.Model):
     PLAN_CUSTOM = "custom"
     PLAN_CHOICES = [
         (PLAN_FREE, "Free"),
-        (PLAN_PROFESSIONAL, "Professional ($499/月)"),
-        (PLAN_CUSTOM, "Custom Intelligence ($1,499/月)"),
+        (PLAN_PROFESSIONAL, "Professional ($499/mo)"),
+        (PLAN_CUSTOM, "Custom Intelligence ($1,499/mo)"),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
@@ -237,7 +237,7 @@ class ResearchRequest(models.Model):
     """定制情报版用户提交的研究需求。故意做得很简单（标题/描述/格式/附件），
     不是工单系统——原设计明确说了不要做复杂Ticket System。"""
 
-    FORMAT_CHOICES = [("CSV", "CSV"), ("Excel", "Excel"), ("PDF 报告", "PDF 报告")]
+    FORMAT_CHOICES = [("CSV", "CSV"), ("Excel", "Excel"), ("PDF", "PDF Report")]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="research_requests")
     title = models.CharField(max_length=255)

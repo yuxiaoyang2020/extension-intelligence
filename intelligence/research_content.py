@@ -8,41 +8,41 @@
 
 下面这篇文章用的全部数字，都是2026-09-29你在本机对最新快照（2026-09-01，
 257,411个真实Extension，排除is_unlisted=true）跑出来的真实统计结果，
-不是编的——占比是在那组真实计数基础上现算的。
+不是编的——占比是在那组真实计数基础上现算的。2026-09-30全站转英文时，
+这篇文章的标题/正文也翻译成了英文，但数字本身一个没动。
 """
 from __future__ import annotations
 
 ARTICLES = [
     {
         "slug": "how-many-chrome-extensions-have-real-traction",
-        "title": "257,000+ Chrome Extensions：只有3.7%真正有稳定的用户规模与活跃度",
-        "meta_description": "基于257,411个真实Chrome Extension的用户量、评论数、更新时间分布统计，多少插件真正达到了有意义的市场规模。",
+        "title": "257,000+ Chrome Extensions: Only 3.7% Have Real, Sustained User Traction",
+        "meta_description": "A statistical breakdown of user count, review count, and update-recency distribution across 257,411 real Chrome Extensions — how many actually reach meaningful market scale.",
         "published_date": "2026-09-29",
-        "summary": "我们统计了平台收录的全部257,411个Chrome Extension（已排除已下架/未上架的插件），"
-                   "按用户规模、评论活跃度、维护更新频率交叉分析后发现：只有约3.7%的插件同时满足"
-                   "「1000+用户、10+评论、近1年内有更新」这三个基本的「真实市场存在感」信号。",
+        "summary": "We analyzed all 257,411 Chrome Extensions in our platform (excluding delisted/unpublished extensions) across "
+                   "user scale, review activity, and maintenance recency. The result: only about 3.7% of extensions meet all three "
+                   "basic signals of \"real market presence\" at once — 1,000+ users, 10+ reviews, and an update within the last year.",
         "body": [
-            "Chrome网上应用店里的插件数量常常被简单地报成一个总数，但总数掩盖了一个更重要的问题："
-            "这些插件里，有多少是真正被用户使用、有人维护、还在增长的？我们用平台上最新一天"
-            "（2026-09-01）的完整快照数据，对全部257,411个真实Extension（已排除item_category不是"
-            "extension、以及is_unlisted=true即已下架/未上架的插件）做了一次交叉统计。",
-            "**用户规模分布严重右偏**：75.0%的插件（193,067个）用户数在0-99之间，只有0.12%"
-            "（302个）用户数超过100万。用户数达到10,000以上的插件只有7,833个，占全体的3.0%。",
-            "**评论活跃度同样稀薄**：有过至少1条评论的插件占45.98%（118,334个），但评论数达到"
-            "10条以上的只剩8.26%（21,247个），达到100条以上的更是只剩1.67%（4,301个）——"
-            "大多数插件即使有用户，也几乎没有留下任何公开的用户反馈信号。",
-            "**近一年更新率**：170,216个插件（66.1%）在过去365天内有过更新，127,739个"
-            "（49.6%）在过去180天内有更新——意味着仍有约三分之一的已上架插件已经超过一年"
-            "没有维护动作。",
-            "**把三个信号叠加起来**：同时满足「用户数≥1,000」「评论数≥10」「365天内有更新」"
-            "这三个条件的插件只有9,408个，占全部257,411个的3.66%。如果把用户数门槛提高到"
-            "10,000，且不限制更新时间，符合「1,000+用户、10+评论」两个条件（不管多久没更新）"
-            "的插件是15,395个（占5.98%），比加上更新时间限制后的9,408个高出约6,000个——"
-            "说明这6,000多个插件曾经获得过有意义的用户规模和评论积累，但目前已经停止维护超过一年。",
-            "这组数字对我们自己的启示：Extension Intelligence首批开放搜索引擎收录的Detail页面"
-            "（SEO Index Pool），用的正是这9,408个插件作为候选池起点——这不是一个随意选的数字，"
-            "而是这组分布统计里唯一同时满足「有真实用户规模」「有真实用户反馈」「仍在维护」"
-            "三个条件的子集。",
+            "The total count of extensions in the Chrome Web Store is often reported as a single number, but that number hides a more "
+            "important question: how many of these extensions are actually used, maintained, and growing? Using the most recent full "
+            "snapshot on our platform (2026-09-01), we ran a cross-tabulation across all 257,411 real extensions (excluding anything where "
+            "item_category isn't extension, and anything with is_unlisted=true, i.e. delisted/unpublished).",
+            "**User scale is heavily right-skewed**: 75.0% of extensions (193,067) have between 0 and 99 users, while only 0.12% "
+            "(302) have more than 1 million users. Only 7,833 extensions — 3.0% of the total — have 10,000+ users.",
+            "**Review activity is similarly thin**: 45.98% of extensions (118,334) have at least one review, but only 8.26% "
+            "(21,247) have 10 or more reviews, and just 1.67% (4,301) have 100 or more — meaning most extensions, even ones with users, "
+            "leave behind almost no public feedback signal.",
+            "**Recent update rate**: 170,216 extensions (66.1%) were updated within the past 365 days, and 127,739 "
+            "(49.6%) within the past 180 days — meaning roughly a third of published extensions haven't seen a maintenance update in "
+            "over a year.",
+            "**Stacking all three signals together**: only 9,408 extensions — 3.66% of all 257,411 — meet all three conditions at "
+            "once (user count ≥ 1,000, review count ≥ 10, updated within 365 days). If we raise the user threshold to 10,000 and drop the "
+            "update-recency requirement, 15,395 extensions (5.98%) meet just the \"1,000+ users, 10+ reviews\" pair — about 6,000 more than "
+            "the 9,408 that also meet the recency bar. That gap means over 6,000 extensions once reached meaningful user scale and review "
+            "volume, but have since gone more than a year without an update.",
+            "What this means for us: Extension Intelligence's first batch of search-engine-indexed Detail pages (the SEO Index Pool) "
+            "uses exactly these 9,408 extensions as its starting candidate pool — not an arbitrary number, but the one subset in this "
+            "distribution that simultaneously satisfies \"real user scale,\" \"real user feedback,\" and \"still actively maintained.\"",
         ],
     },
 ]

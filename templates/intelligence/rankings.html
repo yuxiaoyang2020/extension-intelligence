@@ -14,15 +14,15 @@
 {% block content %}
 <main style="max-width:1320px;margin:0 auto;padding:0 32px 80px;">
   <section style="padding-top:40px;">
-    <div class="card-kicker" style="margin-bottom:8px;">排行榜</div>
+    <div class="card-kicker" style="margin-bottom:8px;">Rankings</div>
     <h1 style="font-size:28px;margin-bottom:8px;">{{ current_config.label }}</h1>
-    <p style="font-size:14px;opacity:0.7;margin-bottom:4px;">共 {{ total_count }} 个插件</p>
+    <p style="font-size:14px;opacity:0.7;margin-bottom:4px;">{{ total_count }} extensions</p>
     {% if current_config.subtitle %}<p style="font-size:13px;opacity:0.6;margin-bottom:20px;">{{ current_config.subtitle }}</p>{% endif %}
 
     <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;{% if not current_config.subtitle %}margin-top:16px;{% endif %}">
       {% for grp in ranking_groups %}
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <span style="font-size:12px;opacity:0.55;width:88px;flex:none;">{{ grp.label }}</span>
+        <span style="font-size:12px;opacity:0.55;width:150px;flex:none;white-space:nowrap;">{{ grp.label }}</span>
         <div class="seg ei-seg">
           {% for item in grp.items %}
           <a href="?type={{ item.key }}" class="seg-opt" style="text-decoration:none;color:inherit;{% if item.active %}background:var(--color-accent);color:var(--color-bg);{% endif %}">{{ item.label }}</a>
@@ -35,9 +35,9 @@
     <div class="ei-table-wrap">
       {% if current_config.mode == "milestone" %}
       <table class="table">
-        <thead><tr><th style="width:36px;">#</th><th class="ei-col-sticky">插件</th><th>里程碑</th><th class="ei-num">用时</th><th>达成日期</th><th class="ei-num">当前用户数</th></tr></thead>
+        <thead><tr><th style="width:36px;">#</th><th class="ei-col-sticky">Extension</th><th>Milestone</th><th class="ei-num">Time</th><th>Date Reached</th><th class="ei-num">Current Users</th></tr></thead>
         <tbody>
-        {% for row in page_obj %}
+        {% for row in rows %}
           <tr class="ei-row" onclick="location.href='{% url 'intelligence:extension_detail' extension_id=row.extension.extension_id slug=row.extension.slug %}'">
             <td style="opacity:0.6;">{{ row.rank }}</td>
             <td class="ei-col-sticky">
@@ -47,20 +47,20 @@
               </div>
             </td>
             <td>{{ current_config.milestone_label }}</td>
-            <td class="ei-num">{{ row.days }} 天</td>
+            <td class="ei-num">{{ row.days }} days</td>
             <td>{{ row.reached_date|date:"Y-m-d" }}</td>
             <td class="ei-num">{{ row.extension.metric.user_count|fmt_users }}</td>
           </tr>
         {% empty %}
-          <tr><td colspan="6" style="padding:16px;opacity:0.6;">暂无数据，先执行 python manage.py compute_milestones 算一遍里程碑数据</td></tr>
+          <tr><td colspan="6" style="padding:16px;opacity:0.6;">No data yet — run python manage.py compute_milestones first to compute milestone data</td></tr>
         {% endfor %}
         </tbody>
       </table>
       {% else %}
       <table class="table">
-        <thead><tr><th style="width:36px;">#</th><th class="ei-col-sticky">插件</th><th class="ei-num">当前用户数</th><th class="ei-num">{{ current_config.value_label }}</th></tr></thead>
+        <thead><tr><th style="width:36px;">#</th><th class="ei-col-sticky">Extension</th><th class="ei-num">Current Users</th><th class="ei-num">{{ current_config.value_label }}</th></tr></thead>
         <tbody>
-        {% for row in page_obj %}
+        {% for row in rows %}
           <tr class="ei-row" onclick="location.href='{% url 'intelligence:extension_detail' extension_id=row.extension.extension_id slug=row.extension.slug %}'">
             <td style="opacity:0.6;">{{ row.rank }}</td>
             <td class="ei-col-sticky">
@@ -74,7 +74,7 @@
             <td class="ei-num" style="font-weight:600;{% if row.value < 0 %}color:var(--color-danger-700);{% endif %}">{% if current_config.is_percent %}{{ row.value|pct }}%{% else %}{{ row.value|fmt_delta }}{% endif %}</td>
           </tr>
         {% empty %}
-          <tr><td colspan="4" style="padding:16px;opacity:0.6;">暂无数据，先执行 python manage.py sync_top_growth 同步一些插件</td></tr>
+          <tr><td colspan="4" style="padding:16px;opacity:0.6;">No data yet — run python manage.py sync_top_growth to sync some extensions first</td></tr>
         {% endfor %}
         </tbody>
       </table>
@@ -83,17 +83,17 @@
 
     {% if locked %}
     <div style="border:1px solid var(--color-divider);background:var(--color-card);padding:24px;text-align:center;margin-top:16px;border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);">
-      <div class="card-kicker" style="margin-bottom:6px;">专业版功能</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:10px;">免费版只能看到前{{ total_count|default:0 }}个插件里的部分结果，解锁完整排行榜</div>
-      <a href="{% url 'intelligence:pricing' %}" class="btn btn-primary">查看专业版</a>
+      <div class="card-kicker" style="margin-bottom:6px;">Professional feature</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:10px;">The free plan only shows part of the top {{ total_count|default:0 }} extensions — unlock the full rankings</div>
+      <a href="{% url 'intelligence:pricing' %}" class="btn btn-primary">See Professional</a>
     </div>
     {% endif %}
 
     {% if page_obj.paginator.num_pages > 1 %}
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
-      {% if page_obj.has_previous %}<a href="?type={{ current_type }}&page={{ page_obj.previous_page_number }}" class="btn btn-secondary">上一页</a>{% else %}<button class="btn btn-secondary" disabled>上一页</button>{% endif %}
+      {% if page_obj.has_previous %}<a href="?type={{ current_type }}&page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Previous</a>{% else %}<button class="btn btn-secondary" disabled>Previous</button>{% endif %}
       <button class="btn btn-primary">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</button>
-      {% if page_obj.has_next %}<a href="?type={{ current_type }}&page={{ page_obj.next_page_number }}" class="btn btn-secondary">下一页</a>{% else %}<button class="btn btn-secondary" disabled>下一页</button>{% endif %}
+      {% if page_obj.has_next %}<a href="?type={{ current_type }}&page={{ page_obj.next_page_number }}" class="btn btn-secondary">Next</a>{% else %}<button class="btn btn-secondary" disabled>Next</button>{% endif %}
     </div>
     {% endif %}
   </section>

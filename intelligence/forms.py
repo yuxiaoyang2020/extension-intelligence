@@ -16,7 +16,7 @@ class EmailAuthenticationForm(AuthenticationForm):
     CharField 不做格式限制，普通用户和管理员账号都能正常登录。
     """
 
-    username = forms.CharField(label="邮箱")
+    username = forms.CharField(label="Email")
 
 
 class RegisterForm(forms.Form):
@@ -24,13 +24,13 @@ class RegisterForm(forms.Form):
     username 用（Django自带User模型要求一个username字段，这样处理不用换
     成自定义User模型）。"""
 
-    email = forms.EmailField(label="邮箱")
-    password = forms.CharField(label="密码", widget=forms.PasswordInput, min_length=8)
+    email = forms.EmailField(label="Email")
+    password = forms.CharField(label="Password", widget=forms.PasswordInput, min_length=8)
 
     def clean_email(self):
         email = self.cleaned_data["email"]
         if User.objects.filter(username=email).exists():
-            raise forms.ValidationError("这个邮箱已经注册过了")
+            raise forms.ValidationError("This email is already registered")
         return email
 
 
@@ -39,9 +39,9 @@ class ResearchRequestForm(forms.ModelForm):
         model = ResearchRequest
         fields = ["title", "description", "output_format", "attachment"]
         labels = {
-            "title": "需求标题",
-            "description": "需求描述",
-            "output_format": "希望输出格式",
-            "attachment": "可选附件",
+            "title": "Request title",
+            "description": "Request description",
+            "output_format": "Desired output format",
+            "attachment": "Optional attachment",
         }
         widgets = {"description": forms.Textarea(attrs={"rows": 4})}
